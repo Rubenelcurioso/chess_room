@@ -4,27 +4,45 @@ import { MTLLoader } from '../libs/MTLLoader.js'
 import { OBJLoader } from '../libs/OBJLoader.js'
 import * as TWEEN from '../libs/tween.esm.js'
  
-class MyBox extends THREE.Object3D {
+class Puerta extends THREE.Object3D {
   constructor(gui,titleGui) {
     super();
     
     // Se crea la parte de la interfaz que corresponde a la caja
     // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
     this.createGUI(gui,titleGui);
+
+    this.puerta = this.createDoor();
+    this.puerta.translateZ(200);
+    this.puerta.translateX(50);
+
+    var origen  = { angulo : 0};
+    var destino = { angulo : Math.PI/2};
+
+    var animacionAbrir = new TWEEN.Tween( origen )
+      .to( destino, 2000 )
+      .easing( TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.puerta.rotateY(origen.angulo)
+      })
+      .onComplete(() => {
+        origen.angulo = 0;
+      });
+
+    animacionAbrir.start();
     
-    var esfera = new THREE.Mesh(new THREE.SphereGeometry(2),new THREE.MeshBasicMaterial({color: 0xf00000}));
-    esfera.geometry.translate(0,2,0);
-    var cono_geo = new THREE.ConeGeometry(1,0.5);
-    cono_geo.rotateX(-Math.PI);
-    cono_geo.translate(0,4,0);
-    var cono = new THREE.Mesh(cono_geo,new THREE.MeshBasicMaterial({color: 0x00f000}));
-    var csg = new CSG();
-    var resultado = csg.subtract([esfera,cono]);
-    
-    //this.add(esfera);
-    //this.add(cono);
-    this.add(resultado.toMesh());
+    //this.add(this.puerta);
  }
+
+
+  createDoor(){
+    var boxGeometry = new THREE.BoxGeometry(100,200,10);
+    boxGeometry.translate(-50,100,0);
+    var textura = new THREE.TextureLoader().load('../img/door.jpeg');
+    var material = new THREE.MeshPhongMaterial({map: textura});
+
+    return new THREE.Mesh(boxGeometry,material);
+  }
 
   createGUI (gui,titleGui) {
     // Controles para el tamaño, la orientación y la posición de la caja
@@ -43,6 +61,7 @@ class MyBox extends THREE.Object3D {
     // El método   listen()   permite que si se cambia el valor de la variable en código, el deslizador de la interfaz se actualice
     
     folder.add (this.guiControls, 'reset').name ('[ Reset ]');
+
   }
   
   update () {
@@ -52,6 +71,7 @@ class MyBox extends THREE.Object3D {
     // Después, la rotación en Y
     // Luego, la rotación en X
     TWEEN.update();
+    //this.puerta.rotateY(-0.01);
   }
 
   revoluciona(){
@@ -137,4 +157,4 @@ class MyBox extends THREE.Object3D {
 
 }
 
-export { MyBox };
+export { Puerta };

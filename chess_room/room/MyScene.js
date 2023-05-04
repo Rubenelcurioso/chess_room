@@ -3,23 +3,24 @@
 
 import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
-import { TrackballControls } from '../libs/TrackballControls.js'
+//import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
-
+import { CSG } from '../libs/CSG-v2.js'
 // Clases de mi proyecto
-
-import { MyBox } from './MyBox.js'
-import { Tween } from '../libs/tween.esm.js'
+import { Puerta } from './puerta.js'
+import * as TWEEN from '../libs/tween.esm.js'
+import { FirstPersonControls } from '../libs/FirstPersonControls.js'
 
  
-/// La clase fachada del modelo
-/**
+// La clase fachada del modelo
+/*
  * Usaremos una clase derivada de la clase Scene de Three.js para llevar el control de la escena y de todo lo que ocurre en ella.
  */
 
 class MyScene extends THREE.Scene {
   constructor (myCanvas) {
     super();
+    this.canOpenDoor = false;
     
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
     this.renderer = this.createRenderer(myCanvas);
@@ -40,17 +41,83 @@ class MyScene extends THREE.Scene {
     
     // Un suelo 
     this.createGround ();
+
+    this.createRoom();
     
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
     this.axis = new THREE.AxesHelper (5);
     this.add (this.axis);
+    var origen  = { angulo : 0};
+    var destino = { angulo : Math.PI/2};
+
+    var animacionAbrir = new TWEEN.Tween( origen )
+      .to( destino, 2000 )
+      .easing( TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.puerta.rotation.y = origen.angulo;
+      })
+      .onComplete(() => {
+        origen.angulo = 0;
+      });
     
+    var origenLuz = { int : 0.5 };
+    var finLuz    = { int : 0 };
+
+    
+    var animacionApaga = new TWEEN.Tween( origenLuz )
+      .to( finLuz, 500 )
+      .easing( TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.spotLight.intensity = origenLuz.int;
+      })
+      .onComplete(() => {
+        origenLuz.int = 0.5;
+        animacionMedia.start();
+      });
+    
+    finLuz    = { int : 0.25 };
+    var animacionMedia = new TWEEN.Tween( origenLuz )
+    .to( finLuz, 500 )
+    .easing( TWEEN.Easing.Linear.None)
+    .onUpdate(() => {
+      this.spotLight.intensity = origenLuz.int;
+    })
+    .onComplete(() => {
+      origenLuz.int = 0.5;
+      animacionEnciende.start();
+    })
+    .yoyo(true);
+  
+
+
+    origenLuz = { int : 0 };
+    finLuz    = { int : 0.5 };
+
+    var animacionEnciende = new TWEEN.Tween( origenLuz )
+    .to( finLuz, 500 )
+    .easing( TWEEN.Easing.Linear.None)
+    .onUpdate(() => {
+      this.spotLight.intensity = origenLuz.int;
+    })
+    .onComplete(() => {
+      origenLuz.int = 0;
+    });
+
+    animacionEnciende.chain(animacionApaga);
+
+    animacionEnciende.start();
+
+    animacionAbrir.start();
+    
+    this.add(this.puerta);
     
     // Por último creamos el modelo.
     // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
     // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-    this.model = new MyBox(this.gui, "Controles de la Caja");
-    this.add (this.model);
+    //this.model = new Puerta(this.gui, "Controles habitación");
+
+
+    //this.add (this.model);
 
   }
   
@@ -72,10 +139,10 @@ class MyScene extends THREE.Scene {
   
   createCamera () {
     // Para crear una cámara le indicamos
-    //   El ángulo del campo de visión en grados sexagesimales
+    //   El ángulo del campo de visión en grados sexagesimales -> 60º ojo humano
     //   La razón de aspecto ancho/alto
     //   Los planos de recorte cercano y lejano
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     // También se indica dónde se coloca
     this.camera.position.set (20, 10, 20);
     // Y hacia dónde mira
@@ -83,7 +150,7 @@ class MyScene extends THREE.Scene {
     this.camera.lookAt(look);
     this.add (this.camera);
     
-    // Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
+/*     // Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
     this.cameraControl = new TrackballControls (this.camera, this.renderer.domElement);
     // Se configuran las velocidades de los movimientos
     this.cameraControl.rotateSpeed = 5;
@@ -91,16 +158,24 @@ class MyScene extends THREE.Scene {
     this.cameraControl.panSpeed = 0.5;
     // Debe orbitar con respecto al punto de mira de la cámara
     this.cameraControl.target = look;
+ */
+    this.cameraFP = new FirstPersonControls(this.camera, this.renderer.domElement);
+    this.cameraFP.activeLook = true;
+    this.cameraFP.heightMax = 2; //H max cámara
+    this.cameraFP.lookVertical = false;
+    this.cameraFP.lookAt(look);
+    this.clock = new THREE.Clock(true);
+    
   }
   
-  createGround () {
+createGround () {
     // El suelo es un Mesh, necesita una geometría y un material.
     
     // La geometría es una caja con muy poca altura
-    var geometryGround = new THREE.BoxGeometry (50,0.2,50);
+    var geometryGround = new THREE.BoxGeometry (400,0.2,400);
     
     // El material se hará con una textura de madera
-    var texture = new THREE.TextureLoader().load('../imgs/wood.jpg');
+    var texture = new THREE.TextureLoader().load('../img/ground.jpeg');
     var materialGround = new THREE.MeshPhongMaterial ({map: texture});
     
     // Ya se puede construir el Mesh
@@ -114,6 +189,51 @@ class MyScene extends THREE.Scene {
     this.add (ground);
   }
   
+  createRoom(){
+    //Crear paredes
+    this.puerta = this.createDoor();
+    this.puerta.translateZ(200);
+    this.puerta.translateX(50);
+    var paredes = [];
+    var translacion;
+    for(let i=0; i<4; i++){
+      paredes.push(this.createWall());
+      translacion = 1;
+      if (i % 2 == 0) {
+        translacion = -1;
+      }
+      if(i>1){
+        paredes[i].rotateY(Math.PI/2);
+      }
+      paredes[i].translateZ(translacion * 200);
+      var roomCSG = new CSG();
+      roomCSG.union([paredes[i]]);
+      roomCSG.subtract([this.puerta]);
+      paredes[i] = roomCSG.toMesh();
+      this.add(paredes[i]);
+    }
+  }
+
+  createDoor(){
+
+    var boxGeometry = new THREE.BoxGeometry(100,200,10);
+    boxGeometry.translate(-50,100,0);
+    var textura = new THREE.TextureLoader().load('../img/door.jpeg');
+    var material = new THREE.MeshPhongMaterial({map: textura});
+
+    return new THREE.Mesh(boxGeometry,material);
+  }
+
+  createWall(){
+    var boxGeometry = new THREE.BoxGeometry(400,400,1);
+    boxGeometry.translate(0,200,0); //Altura/2
+    var textura = new THREE.TextureLoader().load('../img/wall_texture.jpeg');
+    var material = new THREE.MeshPhongMaterial({map: textura});
+
+
+    return new THREE.Mesh(boxGeometry,material);
+  }
+
   createGUI () {
     // Se crea la interfaz gráfica de usuario
     var gui = new GUI();
@@ -157,7 +277,7 @@ class MyScene extends THREE.Scene {
     // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
     // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
     this.spotLight = new THREE.SpotLight( 0xffffff, this.guiControls.lightIntensity );
-    this.spotLight.position.set( 60, 60, 40 );
+    this.spotLight.position.set( 0, 390, 0 );
     this.add (this.spotLight);
   }
   
@@ -210,6 +330,24 @@ class MyScene extends THREE.Scene {
     this.renderer.setSize (window.innerWidth, window.innerHeight);
   }
 
+/*   cameraMotion(event){ //Obtener evento
+    console.log(event);
+        switch(event.keyCode){
+          case 'w':
+            this.moveForward = true;
+            break;
+          case 'a':
+            break;
+          case 's':
+            break;
+          case 'd':
+            break;
+    }
+
+  }
+ */
+
+
   update () {
     
     if (this.stats) this.stats.update();
@@ -217,10 +355,14 @@ class MyScene extends THREE.Scene {
     // Se actualizan los elementos de la escena para cada frame
     
     // Se actualiza la posición de la cámara según su controlador
-    this.cameraControl.update();
+    /* this.cameraControl.update(); */
+    this.cameraFP.update(this.clock.getDelta());
+
     
     // Se actualiza el resto del modelo
-    this.model.update();
+   // this.model.update();
+
+   TWEEN.update();
     
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render (this, this.getCamera());
@@ -241,6 +383,9 @@ $(function () {
   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
   window.addEventListener ("resize", () => scene.onWindowResize());
   
+  window.addEventListener ('keydown', this.cameraMotion);
+  window.addEventListener('mousemove', this.cameraMotion);
+
   // Que no se nos olvide, la primera visualización.
   scene.update();
 });
