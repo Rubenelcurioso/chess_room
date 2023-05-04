@@ -144,7 +144,7 @@ class MyScene extends THREE.Scene {
     //   Los planos de recorte cercano y lejano
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     // También se indica dónde se coloca
-    this.camera.position.set (20, 10, 20);
+    this.camera.position.set (20, 180, 20);
     // Y hacia dónde mira
     var look = new THREE.Vector3 (0,0,0);
     this.camera.lookAt(look);
@@ -160,10 +160,13 @@ class MyScene extends THREE.Scene {
     this.cameraControl.target = look;
  */
     this.cameraFP = new FirstPersonControls(this.camera, this.renderer.domElement);
-    this.cameraFP.activeLook = true;
-    this.cameraFP.heightMax = 2; //H max cámara
-    this.cameraFP.lookVertical = false;
-    this.cameraFP.lookAt(look);
+    this.cameraFP.activeLook = true; //Puede ver alrededor
+    this.cameraFP.heightMax = 200; //H max cámara
+    this.cameraFP.heightMin = 150; //H min cámara
+    this.cameraFP.lookVertical = true; //Puede ver arriba y abajo
+    this.cameraFP.lookSpeed = 0.5; //Sensibilidad
+    this.cameraFP.movementSpeed = 30; //Rapidez del movimiento
+    this.cameraFP.lookAt(look); //Donde comienza viendo la escena
     this.clock = new THREE.Clock(true);
     
   }
@@ -330,22 +333,6 @@ createGround () {
     this.renderer.setSize (window.innerWidth, window.innerHeight);
   }
 
-/*   cameraMotion(event){ //Obtener evento
-    console.log(event);
-        switch(event.keyCode){
-          case 'w':
-            this.moveForward = true;
-            break;
-          case 'a':
-            break;
-          case 's':
-            break;
-          case 'd':
-            break;
-    }
-
-  }
- */
 
 
   update () {
@@ -382,9 +369,7 @@ $(function () {
 
   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
   window.addEventListener ("resize", () => scene.onWindowResize());
-  
-  window.addEventListener ('keydown', this.cameraMotion);
-  window.addEventListener('mousemove', this.cameraMotion);
+ 
 
   // Que no se nos olvide, la primera visualización.
   scene.update();
