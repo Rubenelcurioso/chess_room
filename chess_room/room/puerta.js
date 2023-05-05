@@ -31,6 +31,8 @@ class Puerta extends THREE.Object3D {
 
     animacionAbrir.start();
     
+      this.pomo = new THREE.Object3D();
+
     //this.add(this.puerta);
  }
 
@@ -43,6 +45,15 @@ class Puerta extends THREE.Object3D {
 
     return new THREE.Mesh(boxGeometry,material);
   }
+
+  createPomo(){
+    //Crear  cilindro
+    var cilindroGeometry = new THREE.CylinderGeometry(5,5,5,64);
+    
+    //Crear esfera
+    var esferaGeometry = new THREE.SphereGeometry();
+  }
+
 
   createGUI (gui,titleGui) {
     // Controles para el tamaño, la orientación y la posición de la caja

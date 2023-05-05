@@ -1,7 +1,7 @@
 
 // Clases de la biblioteca
 
-import * as THREE from '../libs/three.module.js'
+import * as THREE from 'three'
 import { GUI } from '../libs/dat.gui.module.js'
 //import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
@@ -150,16 +150,9 @@ class MyScene extends THREE.Scene {
     this.camera.lookAt(look);
     this.add (this.camera);
     
-/*     // Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
-    this.cameraControl = new TrackballControls (this.camera, this.renderer.domElement);
-    // Se configuran las velocidades de los movimientos
-    this.cameraControl.rotateSpeed = 5;
-    this.cameraControl.zoomSpeed = -2;
-    this.cameraControl.panSpeed = 0.5;
-    // Debe orbitar con respecto al punto de mira de la cámara
-    this.cameraControl.target = look;
- */
     this.cameraFP = new FirstPersonControls(this.camera, this.renderer.domElement);
+    this.cameraFP.constrainVertical = true;
+    this.cameraFP.verticalMax = Math.PI - Math.PI/5; //Altura maxima para ver = 4/5 de PI (no mirar a tus pies)
     this.cameraFP.activeLook = true; //Puede ver alrededor
     this.cameraFP.heightMax = 200; //H max cámara
     this.cameraFP.heightMin = 150; //H min cámara
@@ -215,6 +208,11 @@ createGround () {
       paredes[i] = roomCSG.toMesh();
       this.add(paredes[i]);
     }
+    paredes.push(this.createWall()); //Techo
+    paredes[4].rotateX(Math.PI/2);
+    paredes[4].translateY(-200);
+    paredes[4].translateZ(-400);
+    this.add(paredes[4]); //Añadir pared al modelo
   }
 
   createDoor(){
