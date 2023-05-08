@@ -381,7 +381,6 @@ $(function () {
 
   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
   window.addEventListener("resize", () => scene.onWindowResize());
-  window.addEventListener
   window.addEventListener("keydown", function(evento){
     scene.onKeyDown(evento);
   });
