@@ -152,11 +152,10 @@ class MyScene extends THREE.Scene {
     this.add(this.camera);
 
     this.cameracontrol = new PointerLockControls(this.camera, this.renderer.domElement);
-    this.clock = new THREE.Clock(true);
 
   }
 
-   onKeyDown(event) {
+   onKeyDown(event) {//Entrada de movimiento
     switch (event.code) {
       case "KeyW":
         this.cameracontrol.moveForward(10);
@@ -179,6 +178,23 @@ class MyScene extends THREE.Scene {
     }
   }
 
+  onMouseClick(event){//Metodo seleccion
+    //Entrada
+    event.preventDefault();//Cambios sin recargar
+    //Preguntar si obtener entrada raton/ o de la camara
+    var pointer = new THREE.Vector2((event.clientX / window.innerWidth) * 2 -1,1 - 2*(event.clientY / window.innerHeight));
+    var raycaster = new THREE.Raycaster();//Trazar rayo con RayCasting
+    raycaster.setFromCamera(pointer,this.camera);//Traza rayo a partir de la direccion camara y del click
+
+    var interseccion = raycaster.intersectObjects(this.children);//Realiza la interseccion de rayo pasandole los objetos de la escena
+    if(interseccion.length > 0){//Si ha interseccionado con algo
+      if(interseccion[0].object.material.wireframe == true)//Comprobar que no ha sido seleccionado antes
+        interseccion[0].object.material.wireframe = false;//(Futuro deseleccionar)
+      else
+      interseccion[0].object.material.wireframe = true;
+    }
+    //Devolver el objeto?
+  }
 
   createGround() {
     // El suelo es un Mesh, necesita una geometría y un material.
@@ -384,6 +400,12 @@ $(function () {
   window.addEventListener("keydown", function(evento){
     scene.onKeyDown(evento);
   });
+
+  window.addEventListener("click", function(evento){
+    console.log(scene.onMouseClick(evento));
+  });
+
+  console.log(scene.camera)
 
   // Que no se nos olvide, la primera visualización.
   scene.update();
