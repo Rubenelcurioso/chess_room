@@ -90,24 +90,71 @@ class MyScene extends THREE.Scene {
       .yoyo(true);
 
 
-
-    origenLuz = { int: 0 };
-    finLuz = { int: 0.5 };
-
-    var animacionEnciende = new TWEEN.Tween(origenLuz)
-      .to(finLuz, 500)
-      .easing(TWEEN.Easing.Linear.None)
+      var origenLuz = { int : 0.5 };
+      var finLuz    = { int : 0.001 };
+      
+      var tiempo = 1000;
+      var animacionApaga = new TWEEN.Tween( origenLuz )
+        .to( finLuz, tiempo )
+        .easing( TWEEN.Easing.Linear.None)
+        .onUpdate(() => {
+          this.spotLight.intensity = origenLuz.int;
+        })
+        .onComplete(() => {
+          origenLuz.int = 0.5;
+          animacionMedia1.start();
+        });
+  
+      var medioLuz =    { int : 0.001 };
+      var medioFinLuz = { int : 0.25  };
+  
+      var tiempo2 = 125;
+  
+      var animacionMedia1 = new TWEEN.Tween( medioLuz )
+      .to( medioFinLuz, tiempo2 )
+      .easing( TWEEN.Easing.Linear.None)
       .onUpdate(() => {
-        this.spotLight.intensity = origenLuz.int;
+        this.spotLight.intensity = medioLuz.int;
       })
       .onComplete(() => {
-        origenLuz.int = 0;
+        medioLuz.int = 0.001;
+        animacionMedia2.start();
+      });
+  
+      var medioLuz2 =    { int : 0.25 };
+      var medioFinLuz2 = { int : 0.0001  };
+  
+      var tiempo3 = 125;
+  
+      var animacionMedia2 = new TWEEN.Tween( medioLuz2 )
+      .to( medioFinLuz2, tiempo3 )
+      .easing( TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.spotLight.intensity = medioLuz2.int;
+      })
+      .onComplete(() => {
+        medioLuz2.int = 0.125;
+        animacionEnciende.start();
+      });
+  
+  
+      var origenLuzFin =    { int : 0.25 };
+      var finLuzFin    =    { int : 0.5  };
+  
+      var tiempo4 = 500;
+  
+      var animacionEnciende = new TWEEN.Tween( origenLuzFin )
+      .to( finLuzFin, tiempo4 )
+      .easing( TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.spotLight.intensity = origenLuzFin.int;
+      })
+      .onComplete(() => {
+        origenLuzFin.int = 0.125;
+        animacionApaga.start();
       });
 
-    animacionEnciende.chain(animacionApaga);
-
-    animacionEnciende.start();
-
+    animacionApaga.start();  
     animacionAbrir.start();
 
     this.add(this.puerta);
