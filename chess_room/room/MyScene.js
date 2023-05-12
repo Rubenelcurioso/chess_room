@@ -214,8 +214,22 @@ class MyScene extends THREE.Scene {
       var raycaster = new THREE.Raycaster(posicion,direccion);//Trazar rayo
       //Comprobar colisiones
       var intersecciones = raycaster.intersectObjects(this.children); //Interseccion con el rayo
-      if(intersecciones.length > 0 && intersecciones[0].distance < 25)//0 = Objeto más cercano
-        return "Colision "+THREE.MathUtils.radToDeg(angulo_rot);
+      if(intersecciones.length > 0 && intersecciones[0].distance < 25){//0 = Objeto más cercano
+        switch(i){
+          case 0: 
+            this.movingForward = false;
+            break;
+          case 1:
+            this.movingLeft = false;
+            break;
+          case 2:
+            this.movingBackward = false;
+            break;
+          case 3:
+            this.movingRight = false;
+            break;
+        }
+      }
 
       angulo_rot += Math.PI/2; //Gira 90º en eje Y
       direccion = direccion.applyAxisAngle(eje_rotacion,angulo_rot);//Rotar la direccion que mira
