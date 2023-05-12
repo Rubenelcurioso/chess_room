@@ -275,7 +275,7 @@ class MyScene extends THREE.Scene {
     //Entrada
     event.preventDefault();//Cambios sin recargar
     //Preguntar si obtener entrada raton/ o de la camara
-    var pointer = new THREE.Vector2((event.clientX / window.innerWidth) * 2 -1,1 - 2*(event.clientY / window.innerHeight));
+    var pointer = new THREE.Vector2(0,0);
     var raycaster = new THREE.Raycaster();//Trazar rayo con RayCasting
     raycaster.setFromCamera(pointer,this.camera);//Traza rayo a partir de la direccion camara y del click
 
