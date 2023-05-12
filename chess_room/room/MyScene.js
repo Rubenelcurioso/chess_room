@@ -155,7 +155,28 @@ class MyScene extends THREE.Scene {
 
   }
 
+  //TODO: Movimiento + colision de camara
+  checkCameraCollision(){
+    var direccion = new THREE.Vector3;
+    this.cameracontrol.getDirection(direccion);//Obtener direccion a donde mira
+    var posicion = this.cameracontrol.getObject().position; //Obtener posicion de la camara
+    var eje_rotacion = new THREE.Vector3(0,1,0); //Eje va rotar la cámara
+    var angulo_rot = 0;
+    //Para los demás movimientos sería rotar la dirección de la cámara (sin rotar cámara) y lanzar rayo
+    for(let i=0; i<4; i++){//Calcular colisión 4 direcciones
+      var raycaster = new THREE.Raycaster(posicion,direccion);//Trazar rayo
+      //Comprobar colisiones
+      var intersecciones = raycaster.intersectObjects(this.children); //Interseccion con el rayo
+      if(intersecciones.length > 0 && intersecciones[0].distance < 25)//0 = Objeto más cercano
+        return "Colision "+THREE.MathUtils.radToDeg(angulo_rot);
+
+      angulo_rot += Math.PI/2; //Gira 90º en eje Y
+      direccion = direccion.applyAxisAngle(eje_rotacion,angulo_rot);//Rotar la direccion que mira
+    }
+  }
+
    onKeyDown(event) {//Entrada de movimiento
+    console.log(this.checkCameraCollision());
     switch (event.code) {
       case "KeyW":
         this.cameracontrol.moveForward(10);
@@ -370,7 +391,7 @@ class MyScene extends THREE.Scene {
     if (this.stats) this.stats.update();
 
     // Se actualizan los elementos de la escena para cada frame
-
+   
     // Se actualiza la posición de la cámara según su controlador
 
 
@@ -402,7 +423,7 @@ $(function () {
   });
 
   window.addEventListener("click", function(evento){
-    console.log(scene.onMouseClick(evento));
+    scene.onMouseClick(evento);
   });
 
   console.log(scene.camera)
