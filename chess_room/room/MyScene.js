@@ -226,22 +226,47 @@ class MyScene extends THREE.Scene {
     console.log(this.checkCameraCollision());
     switch (event.code) {
       case "KeyW":
-        this.cameracontrol.moveForward(10);
+        this.movingForward = true;
+        // this.cameracontrol.moveForward(10);
         break;
       case "KeyS":
-        this.cameracontrol.moveForward(-10);
+        this.movingBackward = true;
+        // this.cameracontrol.moveForward(-10);
         break;
       case "KeyD":
-        this.cameracontrol.moveRight(10);
+        this.movingRight = true;
+        // this.cameracontrol.moveRight(10);
         break;
       case "KeyA":
-        this.cameracontrol.moveRight(-10);
+        this.movingLeft = true;
+        // this.cameracontrol.moveRight(-10);
         break;
       case "Enter":
         this.cameracontrol.lock();
         break;
       case "Escape":
         this.cameracontrol.unlock();
+        break;
+    }
+  }
+
+  onKeyUp(event){
+    switch (event.code) {
+      case "KeyW":
+        this.movingForward = false;
+        // this.cameracontrol.moveForward(10);
+        break;
+      case "KeyS":
+        this.movingBackward = false;
+        // this.cameracontrol.moveForward(-10);
+        break;
+      case "KeyD":
+        this.movingRight = false;
+        // this.cameracontrol.moveRight(10);
+        break;
+      case "KeyA":
+        this.movingLeft = false;
+        // this.cameracontrol.moveRight(-10);
         break;
     }
   }
@@ -437,6 +462,23 @@ class MyScene extends THREE.Scene {
 
     if (this.stats) this.stats.update();
 
+    if (this.movingForward){
+      this.cameracontrol.moveForward(2);
+    }
+
+    if (this.movingBackward){
+      this.cameracontrol.moveForward(-2);
+    }
+
+    if (this.movingLeft){
+      this.cameracontrol.moveRight(-2);
+    }
+
+    if (this.movingRight){
+      this.cameracontrol.moveRight(2);
+
+    }
+
     // Se actualizan los elementos de la escena para cada frame
    
     // Se actualiza la posición de la cámara según su controlador
@@ -467,6 +509,10 @@ $(function () {
   window.addEventListener("resize", () => scene.onWindowResize());
   window.addEventListener("keydown", function(evento){
     scene.onKeyDown(evento);
+  });
+
+  window.addEventListener("keyup", function(evento){
+    scene.onKeyUp(evento);
   });
 
   window.addEventListener("click", function(evento){
