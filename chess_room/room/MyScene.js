@@ -90,29 +90,29 @@ class MyScene extends THREE.Scene {
       .yoyo(true);
 
 
-      var origenLuz = { int : 0.5 };
-      var finLuz    = { int : 0.001 };
-      
-      var tiempo = 1000;
-      var animacionApaga = new TWEEN.Tween( origenLuz )
-        .to( finLuz, tiempo )
-        .easing( TWEEN.Easing.Linear.None)
-        .onUpdate(() => {
-          this.spotLight.intensity = origenLuz.int;
-        })
-        .onComplete(() => {
-          origenLuz.int = 0.5;
-          animacionMedia1.start();
-        });
-  
-      var medioLuz =    { int : 0.001 };
-      var medioFinLuz = { int : 0.25  };
-  
-      var tiempo2 = 125;
-  
-      var animacionMedia1 = new TWEEN.Tween( medioLuz )
-      .to( medioFinLuz, tiempo2 )
-      .easing( TWEEN.Easing.Linear.None)
+    var origenLuz = { int: 0.5 };
+    var finLuz = { int: 0.001 };
+
+    var tiempo = 1000;
+    var animacionApaga = new TWEEN.Tween(origenLuz)
+      .to(finLuz, tiempo)
+      .easing(TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.spotLight.intensity = origenLuz.int;
+      })
+      .onComplete(() => {
+        origenLuz.int = 0.5;
+        animacionMedia1.start();
+      });
+
+    var medioLuz = { int: 0.001 };
+    var medioFinLuz = { int: 0.25 };
+
+    var tiempo2 = 125;
+
+    var animacionMedia1 = new TWEEN.Tween(medioLuz)
+      .to(medioFinLuz, tiempo2)
+      .easing(TWEEN.Easing.Linear.None)
       .onUpdate(() => {
         this.spotLight.intensity = medioLuz.int;
       })
@@ -120,15 +120,15 @@ class MyScene extends THREE.Scene {
         medioLuz.int = 0.001;
         animacionMedia2.start();
       });
-  
-      var medioLuz2 =    { int : 0.25 };
-      var medioFinLuz2 = { int : 0.0001  };
-  
-      var tiempo3 = 125;
-  
-      var animacionMedia2 = new TWEEN.Tween( medioLuz2 )
-      .to( medioFinLuz2, tiempo3 )
-      .easing( TWEEN.Easing.Linear.None)
+
+    var medioLuz2 = { int: 0.25 };
+    var medioFinLuz2 = { int: 0.0001 };
+
+    var tiempo3 = 125;
+
+    var animacionMedia2 = new TWEEN.Tween(medioLuz2)
+      .to(medioFinLuz2, tiempo3)
+      .easing(TWEEN.Easing.Linear.None)
       .onUpdate(() => {
         this.spotLight.intensity = medioLuz2.int;
       })
@@ -136,16 +136,16 @@ class MyScene extends THREE.Scene {
         medioLuz2.int = 0.125;
         animacionEnciende.start();
       });
-  
-  
-      var origenLuzFin =    { int : 0.25 };
-      var finLuzFin    =    { int : 0.5  };
-  
-      var tiempo4 = 500;
-  
-      var animacionEnciende = new TWEEN.Tween( origenLuzFin )
-      .to( finLuzFin, tiempo4 )
-      .easing( TWEEN.Easing.Linear.None)
+
+
+    var origenLuzFin = { int: 0.25 };
+    var finLuzFin = { int: 0.5 };
+
+    var tiempo4 = 500;
+
+    var animacionEnciende = new TWEEN.Tween(origenLuzFin)
+      .to(finLuzFin, tiempo4)
+      .easing(TWEEN.Easing.Linear.None)
       .onUpdate(() => {
         this.spotLight.intensity = origenLuzFin.int;
       })
@@ -154,7 +154,7 @@ class MyScene extends THREE.Scene {
         animacionApaga.start();
       });
 
-    animacionApaga.start();  
+    animacionApaga.start();
     animacionAbrir.start();
 
     this.add(this.puerta);
@@ -203,20 +203,19 @@ class MyScene extends THREE.Scene {
   }
 
   //TODO: Movimiento + colision de camara
-  checkCameraCollision(){
-    var direccion = new THREE.Vector3;
-    this.cameracontrol.getDirection(direccion);//Obtener direccion a donde mira
+  checkCameraCollision() {
+    var direccion = new THREE.Vector3(0, 0, 1);
     var posicion = this.cameracontrol.getObject().position; //Obtener posicion de la camara
-    var eje_rotacion = new THREE.Vector3(0,1,0); //Eje va rotar la cámara
+    var eje_rotacion = new THREE.Vector3(0, 1, 0); //Eje va rotar la cámara
     var angulo_rot = 0;
     //Para los demás movimientos sería rotar la dirección de la cámara (sin rotar cámara) y lanzar rayo
-    for(let i=0; i<4; i++){//Calcular colisión 4 direcciones
-      var raycaster = new THREE.Raycaster(posicion,direccion);//Trazar rayo
+    for (let i = 0; i < 4; i++) {//Calcular colisión 4 direcciones
+      var raycaster = new THREE.Raycaster(posicion, direccion);//Trazar rayo
       //Comprobar colisiones
       var intersecciones = raycaster.intersectObjects(this.children); //Interseccion con el rayo
-      if(intersecciones.length > 0 && intersecciones[0].distance < 25){//0 = Objeto más cercano
-        switch(i){
-          case 0: 
+      if (intersecciones.length > 0 && intersecciones[0].distance < 25) {//0 = Objeto más cercano
+        switch (i) {
+          case 0:
             this.movingForward = false;
             break;
           case 1:
@@ -231,13 +230,13 @@ class MyScene extends THREE.Scene {
         }
       }
 
-      angulo_rot += Math.PI/2; //Gira 90º en eje Y
-      direccion = direccion.applyAxisAngle(eje_rotacion,angulo_rot);//Rotar la direccion que mira
+      angulo_rot += Math.PI / 2; //Gira 90º en eje Y
+      direccion = direccion.applyAxisAngle(eje_rotacion, angulo_rot);//Rotar la direccion que mira
     }
   }
 
-   onKeyDown(event) {//Entrada de movimiento
-    console.log(this.checkCameraCollision());
+  onKeyDown(event) {//Entrada de movimiento
+    this.checkCameraCollision();
     switch (event.code) {
       case "KeyW":
         this.movingForward = true;
@@ -264,7 +263,7 @@ class MyScene extends THREE.Scene {
     }
   }
 
-  onKeyUp(event){
+  onKeyUp(event) {
     switch (event.code) {
       case "KeyW":
         this.movingForward = false;
@@ -285,22 +284,47 @@ class MyScene extends THREE.Scene {
     }
   }
 
-  onMouseClick(event){//Metodo seleccion
+  onMouseClick(event) {//Metodo seleccion
     //Entrada
+    this.seleccion = true;
     event.preventDefault();//Cambios sin recargar
     //Preguntar si obtener entrada raton/ o de la camara
-    var pointer = new THREE.Vector2(0,0);
+    var pointer = new THREE.Vector2(0, 0);
     var raycaster = new THREE.Raycaster();//Trazar rayo con RayCasting
-    raycaster.setFromCamera(pointer,this.camera);//Traza rayo a partir de la direccion camara y del click
+    raycaster.setFromCamera(pointer, this.camera);//Traza rayo a partir de la direccion camara y del click
 
     var interseccion = raycaster.intersectObjects(this.children);//Realiza la interseccion de rayo pasandole los objetos de la escena
-    if(interseccion.length > 0){//Si ha interseccionado con algo
-      if(interseccion[0].object.material.wireframe == true)//Comprobar que no ha sido seleccionado antes
-        interseccion[0].object.material.wireframe = false;//(Futuro deseleccionar)
-      else
-      interseccion[0].object.material.wireframe = true;
+    if (interseccion.length > 0) {//Si ha interseccionado con algo
+      if (interseccion[0].object.material.wireframe == false && this.seleccion == true) {//Comprobar que no ha sido seleccionado antes
+        this.material_seleccionado = interseccion[0].object.material;
+        this.objeto_seleccionado = interseccion[0].object;
+        this.distancia_seleccionado = interseccion[0].distance;
+        this.objeto_seleccionado.material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        this.objeto_seleccionado.material.transparent = true;
+        this.objeto_seleccionado.material.opacity = 0.25;
+      }
     }
     //Devolver el objeto?
+    return { objeto: interseccion[0].object, distancia: interseccion[0].distance };
+  }
+
+  unselectObject() {
+    this.objeto_seleccionado.material = this.material_seleccionado;
+    this.objeto_seleccionado.material.opacity = 1;
+    this.add(this.objeto_seleccionado);
+    this.seleccion = false;
+    this.objeto_seleccionado = null;
+    this.distancia_seleccionado = 0;
+  }
+
+  movableObject() {
+    if (this.seleccion == true) {//Comprobar si esta siendo seleccionado
+      var cameraPosition = this.cameracontrol.getObject().position.clone(); // Clona la posición de la cámara
+      var cameraDirection = this.cameracontrol.getDirection(new THREE.Vector3()); // Obtiene la dirección de la cámara en el mundo
+      var distance = this.distancia_seleccionado; // Distancia desde la cámara
+      var targetPosition = cameraPosition.clone().add(cameraDirection.multiplyScalar(distance));
+      this.objeto_seleccionado.position.copy(targetPosition);
+    }
   }
 
   createGround() {
@@ -476,25 +500,27 @@ class MyScene extends THREE.Scene {
 
     if (this.stats) this.stats.update();
 
-    if (this.movingForward){
+    if (this.movingForward) {
       this.cameracontrol.moveForward(2);
     }
 
-    if (this.movingBackward){
+    if (this.movingBackward) {
       this.cameracontrol.moveForward(-2);
     }
 
-    if (this.movingLeft){
+    if (this.movingLeft) {
       this.cameracontrol.moveRight(-2);
     }
 
-    if (this.movingRight){
+    if (this.movingRight) {
       this.cameracontrol.moveRight(2);
 
     }
 
+
+
     // Se actualizan los elementos de la escena para cada frame
-   
+
     // Se actualiza la posición de la cámara según su controlador
 
 
@@ -521,19 +547,28 @@ $(function () {
 
   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
   window.addEventListener("resize", () => scene.onWindowResize());
-  window.addEventListener("keydown", function(evento){
+  window.addEventListener("keydown", function (evento) {
     scene.onKeyDown(evento);
   });
 
-  window.addEventListener("keyup", function(evento){
+  window.addEventListener("keyup", function (evento) {
     scene.onKeyUp(evento);
   });
 
-  window.addEventListener("click", function(evento){
-    scene.onMouseClick(evento);
+  var _array;
+  window.addEventListener("mousedown", function (evento) {
+    _array = scene.onMouseClick(evento);
   });
 
-  console.log(scene.camera)
+  window.addEventListener("mousemove", function (evento) {
+    scene.movableObject(_array.objeto, _array.distancia);
+  });
+
+  window.addEventListener("mouseup", function (evento) {
+    scene.unselectObject();
+  });
+
+  console.log(scene.camera);
 
   // Que no se nos olvide, la primera visualización.
   scene.update();
