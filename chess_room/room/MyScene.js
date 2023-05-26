@@ -7,9 +7,9 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { Stats } from '../libs/stats.module.js'
 import { CSG } from '../libs/CSG-v2.js'
 // Clases de mi proyecto
-import { Puerta } from './puerta.js'
+import { Tablero } from '../room/tablero.js'
+import { Torre } from '../room/torre.js'
 import * as TWEEN from '../libs/tween.esm.js'
-import { FirstPersonControls } from '../libs/FirstPersonControls.js'
 import { PointerLockControls } from '../libs/PointerLockControls.js'
 
 
@@ -161,14 +161,9 @@ class MyScene extends THREE.Scene {
 
     this.add(this.puerta);
 
-    // Por último creamos el modelo.
-    // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
-    // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-    //this.model = new Puerta(this.gui, "Controles habitación");
-
-
-    //this.add (this.model);
-
+    //Seccion añadir modelos aqui
+      this.add(new Torre());
+      this.add(new Tablero());
   }
 
   initStats() {
