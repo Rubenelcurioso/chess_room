@@ -21,6 +21,8 @@ import { PointerLockControls } from '../libs/PointerLockControls.js'
 class MyScene extends THREE.Scene {
   constructor(myCanvas) {
     super();
+    
+    this.reloj = new THREE.Clock();
     this.canOpenDoor = false;
 
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
