@@ -202,37 +202,82 @@ class MyScene extends THREE.Scene {
 
   }
 
-  //TODO: Movimiento + colision de camara
-  checkCameraCollision() {
-    var direccion = new THREE.Vector3(0, 0, 1);
-    var posicion = this.cameracontrol.getObject().position; //Obtener posicion de la camara
-    var eje_rotacion = new THREE.Vector3(0, 1, 0); //Eje va rotar la cámara
-    var angulo_rot = 0;
-    //Para los demás movimientos sería rotar la dirección de la cámara (sin rotar cámara) y lanzar rayo
-    for (let i = 0; i < 4; i++) {//Calcular colisión 4 direcciones
-      var raycaster = new THREE.Raycaster(posicion, direccion);//Trazar rayo
-      //Comprobar colisiones
-      var intersecciones = raycaster.intersectObjects(this.children); //Interseccion con el rayo
-      if (intersecciones.length > 0 && intersecciones[0].distance < 25) {//0 = Objeto más cercano
-        switch (i) {
-          case 0:
-            this.movingForward = false;
-            break;
-          case 1:
-            this.movingLeft = false;
-            break;
-          case 2:
-            this.movingBackward = false;
-            break;
-          case 3:
-            this.movingRight = false;
-            break;
-        }
-      }
+  checkCameraCollision(){
+    var direccion = new THREE.Vector3;
+    this.cameracontrol.getDirection(direccion);
+    direccion.y = 0;
+    direccion.normalize();
+    // this.cameracontrol.getDirection(direccion);                           //Obtenemos la dirección de la cámara
+    var posicion = this.cameracontrol.getObject().position;               //Obtenemos su posición
 
-      angulo_rot += Math.PI / 2; //Gira 90º en eje Y
-      direccion = direccion.applyAxisAngle(eje_rotacion, angulo_rot);//Rotar la direccion que mira
+    var eje_rotacion = new THREE.Vector3(0,1,0);
+    var angulo_rot = 0;
+    
+    // Hacemos un raycast según la dirección a la que nos estemos moviendo para saber si colisionamos con una pared o no
+       
+    if (this.movingForward){
+      var raycaster = new THREE.Raycaster(posicion, direccion);               //Trazamos el rayo
+      //Comprobamos las colisiones
+      var intersecciones = raycaster.intersectObjects(this.children);         //Intersección con el rayo
+      if (intersecciones.length > 0 && intersecciones[0].distance < 50){      //0 = objeto más cercano
+        this.collisionForward = true;
+      }
+      else{
+        this.collisionForward = false;
+      }      
     }
+
+    if (this.movingBackward){
+      var direccionAtras = direccion;
+      direccionAtras = direccionAtras.negate();
+      var raycaster = new THREE.Raycaster(posicion, direccionAtras);               //Trazamos el rayo
+      //Comprobamos las colisiones
+      var intersecciones = raycaster.intersectObjects(this.children);         //Intersección con el rayo
+      if (intersecciones.length > 0 && intersecciones[0].distance < 50){      //0 = objeto más cercano
+        this.collisionBackward = true;
+      }
+      else{
+        this.collisionBackward = false;
+      }
+    }
+
+    if (this.movingLeft){
+      if (this.movingBackward){
+        direccion = direccion.applyAxisAngle(eje_rotacion, -Math.PI/2);
+      }
+      else{
+        direccion = direccion.applyAxisAngle(eje_rotacion, Math.PI/2);
+      }
+      var raycaster = new THREE.Raycaster(posicion, direccion);               //Trazamos el rayo
+      //Comprobamos las colisiones
+      var intersecciones = raycaster.intersectObjects(this.children);         //Intersección con el rayo
+      if (intersecciones.length > 0 && intersecciones[0].distance < 50){      //0 = objeto más cercano
+        this.collisionLeft = true;
+      }
+      else{
+        this.collisionLeft = false;
+      }
+    }
+
+    if (this.movingRight){
+      if (this.movingBackward){
+        direccion = direccion.applyAxisAngle(eje_rotacion, Math.PI/2);
+      }
+      else{
+        direccion = direccion.applyAxisAngle(eje_rotacion, -Math.PI/2);
+      }
+      var raycaster = new THREE.Raycaster(posicion, direccion);               //Trazamos el rayo
+      //Comprobamos las colisiones
+      var intersecciones = raycaster.intersectObjects(this.children);         //Intersección con el rayo
+      if (intersecciones.length > 0 && intersecciones[0].distance < 50){      //0 = objeto más cercano
+        this.collisionRight = true;
+      }
+      else{
+        this.collisionRight = false;
+      }
+    }
+      angulo_rot += Math.PI/2; //Gira 90º en eje Y
+      direccion = direccion.applyAxisAngle(eje_rotacion,angulo_rot);//Rotar la direccion que mira
   }
 
   onKeyDown(event) {//Entrada de movimiento
@@ -500,20 +545,20 @@ class MyScene extends THREE.Scene {
 
     if (this.stats) this.stats.update();
 
-    if (this.movingForward) {
-      this.cameracontrol.moveForward(2);
+    if (this.movingForward && !this.collisionForward){
+      this.cameracontrol.moveForward(2) * this.reloj.getDelta();
     }
 
-    if (this.movingBackward) {
-      this.cameracontrol.moveForward(-2);
+    if (this.movingBackward && !this.collisionBackward){
+      this.cameracontrol.moveForward(-2) * this.reloj.getDelta();
     }
 
-    if (this.movingLeft) {
-      this.cameracontrol.moveRight(-2);
+    if (this.movingLeft && !this.collisionLeft){
+      this.cameracontrol.moveRight(-2) * this.reloj.getDelta();
     }
 
-    if (this.movingRight) {
-      this.cameracontrol.moveRight(2);
+    if (this.movingRight && !this.collisionRight){
+      this.cameracontrol.moveRight(2) * this.reloj.getDelta();
 
     }
 
