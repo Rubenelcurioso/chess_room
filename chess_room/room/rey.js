@@ -4,7 +4,7 @@ import { MTLLoader } from '../libs/MTLLoader.js'
 import { OBJLoader } from '../libs/OBJLoader.js'
 import * as TWEEN from '../libs/tween.esm.js'
 
-class Torre extends THREE.Object3D {
+class Rey extends THREE.Object3D {
     constructor() {
         super();
 
@@ -12,11 +12,12 @@ class Torre extends THREE.Object3D {
         // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
         var materialLoader = new MTLLoader();
         var objectLoader = new OBJLoader();
-        materialLoader.load('../models/torre/12941_Stone_Chess_Rook_Side_A_V2_l1.mtl',
+        materialLoader.load('../models/rey/12939_Stone_Chess_King_Side_A_V2_l1.mtl',
             (materials) => {
                 objectLoader.setMaterials(materials);
-                objectLoader.load('../models/torre/12941_Stone_Chess_Rook_Side_A_V2_l1.obj',
+                objectLoader.load('../models/rey/12939_Stone_Chess_King_Side_A_V2_l1.obj',
                     (object) => {
+                        object.position.x = -50;
                         object.position.y = 100;
                         object.rotateX(-Math.PI/2);
                         this.add(object);
@@ -121,4 +122,4 @@ class Torre extends THREE.Object3D {
 
 }
 
-export { Torre };
+export { Rey };

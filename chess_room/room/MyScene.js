@@ -9,6 +9,9 @@ import { CSG } from '../libs/CSG-v2.js'
 // Clases de mi proyecto
 import { Tablero } from '../room/tablero.js'
 import { Torre } from '../room/torre.js'
+import { Rey } from '../room/rey.js'
+import { Caballo } from '../room/caballo.js'
+import { Reina } from '../room/reina.js'
 import * as TWEEN from '../libs/tween.esm.js'
 import { PointerLockControls } from '../libs/PointerLockControls.js'
 
@@ -21,7 +24,7 @@ import { PointerLockControls } from '../libs/PointerLockControls.js'
 class MyScene extends THREE.Scene {
   constructor(myCanvas) {
     super();
-    
+
     this.reloj = new THREE.Clock();
     this.canOpenDoor = false;
 
@@ -53,7 +56,7 @@ class MyScene extends THREE.Scene {
     var origen = { angulo: 0 };
     var destino = { angulo: Math.PI / 2 };
 
-    var animacionAbrir = new TWEEN.Tween(origen)
+    this.animacionAbrir = new TWEEN.Tween(origen)
       .to(destino, 2000)
       .easing(TWEEN.Easing.Linear.None)
       .onUpdate(() => {
@@ -157,13 +160,20 @@ class MyScene extends THREE.Scene {
       });
 
     animacionApaga.start();
-    animacionAbrir.start();
+
+    //Contado iniciar = 0
+    this.contador_final = 0;
 
     this.add(this.puerta);
 
     //Seccion añadir modelos aqui
-      this.add(new Torre());
-      this.add(new Tablero());
+    this.add(new Torre());
+    this.add(new Caballo());
+    this.add(new Rey());
+    this.add(new Reina());
+    this.add(new Tablero());
+
+    this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
   }
 
   initStats() {
@@ -199,7 +209,7 @@ class MyScene extends THREE.Scene {
 
   }
 
-  checkCameraCollision(){
+  checkCameraCollision() {
     var direccion = new THREE.Vector3;
     this.cameracontrol.getDirection(direccion);
     direccion.y = 0;
@@ -207,74 +217,74 @@ class MyScene extends THREE.Scene {
     // this.cameracontrol.getDirection(direccion);                           //Obtenemos la dirección de la cámara
     var posicion = this.cameracontrol.getObject().position;               //Obtenemos su posición
 
-    var eje_rotacion = new THREE.Vector3(0,1,0);
+    var eje_rotacion = new THREE.Vector3(0, 1, 0);
     var angulo_rot = 0;
-    
+
     // Hacemos un raycast según la dirección a la que nos estemos moviendo para saber si colisionamos con una pared o no
-       
-    if (this.movingForward){
+
+    if (this.movingForward) {
       var raycaster = new THREE.Raycaster(posicion, direccion);               //Trazamos el rayo
       //Comprobamos las colisiones
       var intersecciones = raycaster.intersectObjects(this.children);         //Intersección con el rayo
-      if (intersecciones.length > 0 && intersecciones[0].distance < 50){      //0 = objeto más cercano
+      if (intersecciones.length > 0 && intersecciones[0].distance < 50) {      //0 = objeto más cercano
         this.collisionForward = true;
       }
-      else{
+      else {
         this.collisionForward = false;
-      }      
+      }
     }
 
-    if (this.movingBackward){
+    if (this.movingBackward) {
       var direccionAtras = direccion;
       direccionAtras = direccionAtras.negate();
       var raycaster = new THREE.Raycaster(posicion, direccionAtras);               //Trazamos el rayo
       //Comprobamos las colisiones
       var intersecciones = raycaster.intersectObjects(this.children);         //Intersección con el rayo
-      if (intersecciones.length > 0 && intersecciones[0].distance < 50){      //0 = objeto más cercano
+      if (intersecciones.length > 0 && intersecciones[0].distance < 50) {      //0 = objeto más cercano
         this.collisionBackward = true;
       }
-      else{
+      else {
         this.collisionBackward = false;
       }
     }
 
-    if (this.movingLeft){
-      if (this.movingBackward){
-        direccion = direccion.applyAxisAngle(eje_rotacion, -Math.PI/2);
+    if (this.movingLeft) {
+      if (this.movingBackward) {
+        direccion = direccion.applyAxisAngle(eje_rotacion, -Math.PI / 2);
       }
-      else{
-        direccion = direccion.applyAxisAngle(eje_rotacion, Math.PI/2);
+      else {
+        direccion = direccion.applyAxisAngle(eje_rotacion, Math.PI / 2);
       }
       var raycaster = new THREE.Raycaster(posicion, direccion);               //Trazamos el rayo
       //Comprobamos las colisiones
       var intersecciones = raycaster.intersectObjects(this.children);         //Intersección con el rayo
-      if (intersecciones.length > 0 && intersecciones[0].distance < 50){      //0 = objeto más cercano
+      if (intersecciones.length > 0 && intersecciones[0].distance < 50) {      //0 = objeto más cercano
         this.collisionLeft = true;
       }
-      else{
+      else {
         this.collisionLeft = false;
       }
     }
 
-    if (this.movingRight){
-      if (this.movingBackward){
-        direccion = direccion.applyAxisAngle(eje_rotacion, Math.PI/2);
+    if (this.movingRight) {
+      if (this.movingBackward) {
+        direccion = direccion.applyAxisAngle(eje_rotacion, Math.PI / 2);
       }
-      else{
-        direccion = direccion.applyAxisAngle(eje_rotacion, -Math.PI/2);
+      else {
+        direccion = direccion.applyAxisAngle(eje_rotacion, -Math.PI / 2);
       }
       var raycaster = new THREE.Raycaster(posicion, direccion);               //Trazamos el rayo
       //Comprobamos las colisiones
       var intersecciones = raycaster.intersectObjects(this.children);         //Intersección con el rayo
-      if (intersecciones.length > 0 && intersecciones[0].distance < 50){      //0 = objeto más cercano
+      if (intersecciones.length > 0 && intersecciones[0].distance < 50) {      //0 = objeto más cercano
         this.collisionRight = true;
       }
-      else{
+      else {
         this.collisionRight = false;
       }
     }
-      angulo_rot += Math.PI/2; //Gira 90º en eje Y
-      direccion = direccion.applyAxisAngle(eje_rotacion,angulo_rot);//Rotar la direccion que mira
+    angulo_rot += Math.PI / 2; //Gira 90º en eje Y
+    direccion = direccion.applyAxisAngle(eje_rotacion, angulo_rot);//Rotar la direccion que mira
   }
 
   onKeyDown(event) {//Entrada de movimiento
@@ -344,6 +354,7 @@ class MyScene extends THREE.Scene {
         this.objeto_seleccionado.material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         this.objeto_seleccionado.material.transparent = true;
         this.objeto_seleccionado.material.opacity = 0.25;
+        this.compruebaFinal();
       }
     }
     //Devolver el objeto?
@@ -360,12 +371,24 @@ class MyScene extends THREE.Scene {
   }
 
   movableObject() {
-    if (this.seleccion == true) {//Comprobar si esta siendo seleccionado
-      var cameraPosition = this.cameracontrol.getObject().position.clone(); // Clona la posición de la cámara
-      var cameraDirection = this.cameracontrol.getDirection(new THREE.Vector3()); // Obtiene la dirección de la cámara en el mundo
-      var distance = this.distancia_seleccionado; // Distancia desde la cámara
-      var targetPosition = cameraPosition.clone().add(cameraDirection.multiplyScalar(distance));
-      this.objeto_seleccionado.position.copy(targetPosition);
+    if (this.seleccion == true) {
+      for (let i = 0; i < this.array_seleccionables.length; i++) {
+        console.log(this.objeto_seleccionado.name);
+        console.log(this.objeto_seleccionado == this.getObjectByName(this.array_seleccionables[i]));
+        if (this.objeto_seleccionado == this.getObjectByName(this.array_seleccionables[i])) {
+          var cameraPosition = this.cameracontrol.getObject().position.clone();
+          var cameraDirection = this.cameracontrol.getDirection(new THREE.Vector3());
+          var distance = this.distancia_seleccionado;
+          var targetPosition = cameraPosition.clone().add(cameraDirection.multiplyScalar(distance));
+
+
+          // Actualizar la posición del objeto seleccionado
+          this.objeto_seleccionado.position.x = targetPosition.x;
+          this.objeto_seleccionado.position.y = targetPosition.y;
+          this.objeto_seleccionado.position.z = targetPosition.z;
+          this.objeto_seleccionado.updateMatrixWorld(); // Actualizar la matriz de transformación del objeto seleccionado
+        }
+      }
     }
   }
 
@@ -536,33 +559,68 @@ class MyScene extends THREE.Scene {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+  compruebaFinal() {
+    console.log("Contador final antes -> " + this.contador_final);
+    if (this.final) this.contador_final++; //Para que sólo se pueda hacer 1 vez la animación
+    console.log("Contador final despues -> " + this.contador_final);
+    console.log("Objeto seleccionado -> " + this.objeto_seleccionado);
+    console.log("Objeto puerta -> " + this.getObjectById(this.puerta.id));
+    console.log("Final -> " + this.final);
+    console.log("Comprobacion -> " + this.objeto_seleccionado == this.getObjectById(this.puerta.id) && this.contador_final == 1);
+    if (this.objeto_seleccionado == this.getObjectById(this.puerta.id) && this.final && this.contador_final == 1)
+      this.animacionAbrir.start();
+  }
+
+  checkPuzzle() {
+    // Comprobar si cada objeto está a cierta distancia del tablero
+    // Obtener referencias a la escena y a los objetos "tablero" y "torre"
+    var tablero = this.getObjectByName("10586_Chess_Board_v1_max2010");
+    // Verificar si los objetos existen en la escena
+    // Obtener las coordenadas mundiales del tablero y la torre
+    var coords_tablero = new THREE.Vector3();
+    let contador_distancias = 0; //Contador de cuantas piezas están situadas a X distancia
+    for (let i = 0; i < this.array_seleccionables.length; i++) {
+      tablero.getWorldPosition(coords_tablero);
+      var objeto = this.getObjectByName(this.array_seleccionables[i]);
+      var coords_objeto = new THREE.Vector3();
+      objeto.getWorldPosition(coords_objeto);
+      var distance = coords_tablero.distanceTo(coords_objeto);
+      if (distance <= 40)
+        contador_distancias++;
+      if (contador_distancias == 4)
+        this.final = true;
+      console.log("contador_distancias -> " + contador_distancias);
+    }
+
+  }
+
+  finalizar() {
+
+  }
 
 
   update() {
 
     if (this.stats) this.stats.update();
 
-    if (this.movingForward && !this.collisionForward){
+    if (this.movingForward && !this.collisionForward) {
       this.cameracontrol.moveForward(2) * this.reloj.getDelta();
     }
 
-    if (this.movingBackward && !this.collisionBackward){
+    if (this.movingBackward && !this.collisionBackward) {
       this.cameracontrol.moveForward(-2) * this.reloj.getDelta();
     }
 
-    if (this.movingLeft && !this.collisionLeft){
+    if (this.movingLeft && !this.collisionLeft) {
       this.cameracontrol.moveRight(-2) * this.reloj.getDelta();
     }
 
-    if (this.movingRight && !this.collisionRight){
+    if (this.movingRight && !this.collisionRight) {
       this.cameracontrol.moveRight(2) * this.reloj.getDelta();
 
     }
 
-
-
     // Se actualizan los elementos de la escena para cada frame
-
     // Se actualiza la posición de la cámara según su controlador
 
 
@@ -600,6 +658,7 @@ $(function () {
   var _array;
   window.addEventListener("mousedown", function (evento) {
     _array = scene.onMouseClick(evento);
+
   });
 
   window.addEventListener("mousemove", function (evento) {
@@ -608,6 +667,7 @@ $(function () {
 
   window.addEventListener("mouseup", function (evento) {
     scene.unselectObject();
+    scene.checkPuzzle();
   });
 
   console.log(scene.camera);

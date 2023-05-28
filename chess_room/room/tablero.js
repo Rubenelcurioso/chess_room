@@ -17,6 +17,7 @@ class Tablero extends THREE.Object3D {
         objectLoader.setMaterials(materials);
         objectLoader.load('../models/tablero/10586_Chess Board_v2_Iterations-2.obj',
           (object) => {
+            object.rotateX(-Math.PI / 2);
             this.add(object);
           }, null, null);
       });
