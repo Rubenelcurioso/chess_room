@@ -15,7 +15,6 @@ import { Reina } from '../room/reina.js'
 import * as TWEEN from '../libs/tween.esm.js'
 import { PointerLockControls } from '../libs/PointerLockControls.js'
 
-
 // La clase fachada del modelo
 /*
  * Usaremos una clase derivada de la clase Scene de Three.js para llevar el control de la escena y de todo lo que ocurre en ella.
@@ -175,6 +174,7 @@ class MyScene extends THREE.Scene {
 
     this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
   }
+
 
   initStats() {
 
@@ -506,7 +506,7 @@ class MyScene extends THREE.Scene {
     // La luz ambiental solo tiene un color y una intensidad
     // Se declara como   var   y va a ser una variable local a este método
     //    se hace así puesto que no va a ser accedida desde otros métodos
-    var ambientLight = new THREE.AmbientLight(0xccddee, 0.35);
+    var ambientLight = new THREE.AmbientLight(0x666666, 0.25);
     // La añadimos a la escena
     this.add(ambientLight);
 
@@ -516,6 +516,8 @@ class MyScene extends THREE.Scene {
     // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
     this.spotLight = new THREE.SpotLight(0xffffff, this.guiControls.lightIntensity);
     this.spotLight.position.set(0, 390, 0);
+    this.spotLight.angle = Math.PI / 8; // Ángulo de apertura de la luz
+    this.spotLight.penumbra = 0.2; // Suavidad de los bordes de la luz
     this.add(this.spotLight);
   }
 
@@ -603,8 +605,13 @@ class MyScene extends THREE.Scene {
 
   }
 
-  finalizar() {
-
+  changeDistance(event) {
+    event.preventDefault();
+    if (event.deltaY > 0) {
+      this.distancia_seleccionado -= 5;
+    } else {
+      this.distancia_seleccionado += 5;
+    }
   }
 
 
@@ -677,6 +684,10 @@ $(function () {
   window.addEventListener("mouseup", function (evento) {
     scene.unselectObject();
     scene.checkPuzzle();
+  });
+
+  window.addEventListener("wheel", function (evento) {
+    scene.changeDistance(evento);
   });
 
   console.log(scene.camera);
