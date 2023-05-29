@@ -368,14 +368,22 @@ class MyScene extends THREE.Scene {
     this.seleccion = false;
     this.objeto_seleccionado = null;
     this.distancia_seleccionado = 0;
+    this.trasladado = false;
   }
 
   movableObject() {
     if (this.seleccion == true) {
+      this.camera.add(this.objeto_seleccionado);//Añade hijo camara
+      var centro = new THREE.Vector3();
       for (let i = 0; i < this.array_seleccionables.length; i++) {
         console.log(this.objeto_seleccionado.name);
         console.log(this.objeto_seleccionado == this.getObjectByName(this.array_seleccionables[i]));
         if (this.objeto_seleccionado == this.getObjectByName(this.array_seleccionables[i])) {
+          if(!this.trasladado){//Variable para computar el centro 1 vez
+            this.objeto_seleccionado.geometry.computeBoundingBox(); //Calcula el boundingbox
+            this.objeto_seleccionado.geometry.center();//Mueve la figura a su centro
+            this.trasladado = true;//Actualizar variable
+          }
           var cameraPosition = this.cameracontrol.getObject().position.clone();
           var cameraDirection = this.cameracontrol.getDirection(new THREE.Vector3());
           var distance = this.distancia_seleccionado;
@@ -389,6 +397,7 @@ class MyScene extends THREE.Scene {
           this.objeto_seleccionado.updateMatrixWorld(); // Actualizar la matriz de transformación del objeto seleccionado
         }
       }
+      this.add(this.objeto_seleccionado);//Añade a escena
     }
   }
 
