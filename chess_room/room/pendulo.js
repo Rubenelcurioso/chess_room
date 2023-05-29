@@ -23,43 +23,64 @@ class Pendulo extends THREE.Object3D {
         this.rope.add(this.sphere);
         this.rope.translateY(this.baseHeight + this.axisHeight);
         this.rope.translateZ(this.axisHeight / 2.5);
-        var duration = 8000;
-        // Variables de configuración
-        // Escalas y rotaciones para el patrón en forma de 8
-        var scales = [
-        new THREE.Vector3(1, 1, 1), // Escala inicial
-        new THREE.Vector3(1, 2, 1), // Escala durante el primer bucle del 8
-        new THREE.Vector3(1, 1, 1), // Escala al final del primer bucle
-        new THREE.Vector3(1, 0.5, 1), // Escala durante el segundo bucle del 8
-        new THREE.Vector3(1, 1, 1) // Escala final
-        ];
-
-        var rotations = [
-        new THREE.Euler(0, 0, 0), // Rotación inicial
-        new THREE.Euler(0, Math.PI, 0), // Rotación durante el primer bucle del 8
-        new THREE.Euler(0, Math.PI * 2, 0), // Rotación al final del primer bucle
-        new THREE.Euler(0, Math.PI * 3, 0), // Rotación durante el segundo bucle del 8
-        new THREE.Euler(0, Math.PI * 4, 0) // Rotación final
-        ];
-
+        //Variables de animación
+        var duration = 2000;
         // Creación del Tween de la animación
-        var animation = new TWEEN.Tween({ t: 0 })
-        .to({ t: 1 }, duration)
-        .easing(TWEEN.Easing.Linear.None)
-        .onUpdate(function() {
-            var scaleIndex = Math.floor(this.t * scales.length);
-            var rotationIndex = Math.floor(this.t * rotations.length);
+        var origenSubida = { angulo : 0};
+        var destinoSubida = {angulo : Math.PI/2};
+        var animacionSubida1 = new TWEEN.Tween(origenSubida)
+            .to(destinoSubida, duration)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .onUpdate(() => {
+                this.rope.rotation.z = origenSubida.angulo;
+            })
+            .onComplete(() =>{
 
-            // Aplicar la escala y rotación correspondientes
-            
-            this.rope.scale.x = scales[scaleIndex].x;
-            this.rope.scale.y = scales[scaleIndex].y;
-            this.rope.scale.z = scales[scaleIndex].z;
-            this.rope.rotation.x = rotations[rotationIndex].x;
-            this.rope.rotation.y = rotations[rotationIndex].y;
-            this.rope.rotation.z = rotations[rotationIndex].z;
+                origenSubida.angulo = Math.PI/2;
+                destinoSubida.angulo = 0;
+                animacionBajada1.start();
+            });
+        
+        var animacionBajada1 = new TWEEN.Tween(origenSubida)
+        .to(destinoSubida, duration)
+        .easing(TWEEN.Easing.Quadratic.In)
+        .onUpdate(() => {
+            this.rope.rotation.z = origenSubida.angulo;
         })
-        .start();
+        .onComplete(() =>{
+
+            origenSubida.angulo = 0;
+            destinoSubida.angulo = -Math.PI/2;
+            animacionSubida2.start();
+        });
+
+        var animacionSubida2 = new TWEEN.Tween(origenSubida)
+        .to(destinoSubida, duration)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+            this.rope.rotation.z = origenSubida.angulo;
+        })
+        .onComplete(() =>{
+
+            origenSubida.angulo = -Math.PI/2;
+            destinoSubida.angulo = 0;
+            animacionBajada2.start();
+        });
+
+        var animacionBajada2 = new TWEEN.Tween(origenSubida)
+            .to(destinoSubida, duration)
+            .easing(TWEEN.Easing.Quadratic.In)
+            .onUpdate(() => {
+                this.rope.rotation.z = origenSubida.angulo;
+            })
+            .onComplete(() =>{
+
+                origenSubida.angulo = 0;
+                destinoSubida.angulo = Math.PI/2;
+                animacionSubida1.start();
+            });
+
+        animacionSubida1.start();
 
         this.axis2.add(this.rope);
         this.axis1.add(this.axis2)
@@ -104,7 +125,7 @@ class Pendulo extends THREE.Object3D {
     createSphere(){
         this.materialSphere = new THREE.MeshPhongMaterial({color: 0xFF0000});
         this.geometrySphere = new THREE.SphereGeometry(this.sphereRadius, 32, 16);
-        this.geometrySphere.translate(0, -(this.baseHeight + this.ropeHeight), 0);
+        this.geometrySphere.translate(0, -(this.baseHeight/2 + this.ropeHeight), 0);
         this.sphere = new THREE.Mesh(this.geometrySphere, this.materialSphere);
     }
     
