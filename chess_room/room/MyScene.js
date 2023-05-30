@@ -354,6 +354,7 @@ class MyScene extends THREE.Scene {
         this.objeto_seleccionado.material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         this.objeto_seleccionado.material.transparent = true;
         this.objeto_seleccionado.material.opacity = 0.25;
+        this.objeto_seleccionado.material.wireframe = true;
         this.compruebaFinal();
       }
     }
@@ -364,7 +365,6 @@ class MyScene extends THREE.Scene {
   unselectObject() {
     this.objeto_seleccionado.material = this.material_seleccionado;
     this.objeto_seleccionado.material.opacity = 1;
-    this.add(this.objeto_seleccionado);
     this.seleccion = false;
     this.objeto_seleccionado = null;
     this.distancia_seleccionado = 0;
@@ -372,32 +372,39 @@ class MyScene extends THREE.Scene {
   }
 
   movableObject() {
-    if (this.seleccion == true) {
-      this.camera.add(this.objeto_seleccionado);//Añade hijo camara
-      var centro = new THREE.Vector3();
+    if (this.seleccion == true) {//Ha habido selección
+      //Comprobar si es uno de los seleccionables
+      let seleccionable = false;
       for (let i = 0; i < this.array_seleccionables.length; i++) {
-        console.log(this.objeto_seleccionado.name);
-        console.log(this.objeto_seleccionado == this.getObjectByName(this.array_seleccionables[i]));
-        if (this.objeto_seleccionado == this.getObjectByName(this.array_seleccionables[i])) {
-          if(!this.trasladado){//Variable para computar el centro 1 vez
-            this.objeto_seleccionado.geometry.computeBoundingBox(); //Calcula el boundingbox
-            this.objeto_seleccionado.geometry.center();//Mueve la figura a su centro
-            this.trasladado = true;//Actualizar variable
-          }
-          var cameraPosition = this.cameracontrol.getObject().position.clone();
-          var cameraDirection = this.cameracontrol.getDirection(new THREE.Vector3());
-          var distance = this.distancia_seleccionado;
-          var targetPosition = cameraPosition.clone().add(cameraDirection.multiplyScalar(distance));
-
-
-          // Actualizar la posición del objeto seleccionado
-          this.objeto_seleccionado.position.x = targetPosition.x;
-          this.objeto_seleccionado.position.y = targetPosition.y;
-          this.objeto_seleccionado.position.z = targetPosition.z;
-          this.objeto_seleccionado.updateMatrixWorld(); // Actualizar la matriz de transformación del objeto seleccionado
-        }
+        if (this.objeto_seleccionado == this.getObjectByName(this.array_seleccionables[i])) seleccionable = true;//Si objeto es uno de los seleccionables
       }
-      this.add(this.objeto_seleccionado);//Añade a escena
+      if (seleccionable) {//Si es un seleccionable realizar cálculos
+        //Se mueve con respecto a la cámara, no a la escena
+        this.camera.add(this.objeto_seleccionado);//Añade hijo camara
+
+        if (!this.trasladado) {//Variable para computar el centro 1 vez
+          this.objeto_seleccionado.geometry.computeBoundingBox(); //Calcula el boundingbox
+          this.objeto_seleccionado.geometry.center();//Mueve la figura a su centro
+          this.trasladado = true;//Actualizar variable
+        }
+        //Variables para cálculos
+        var cameraPosition = this.cameracontrol.getObject().position.clone();
+        var cameraDirection = this.cameracontrol.getDirection(new THREE.Vector3());
+        var distance = this.distancia_seleccionado;
+        var targetPosition = cameraPosition.clone().add(cameraDirection.multiplyScalar(distance));
+
+
+        // Actualizar la posición del objeto seleccionado
+        this.objeto_seleccionado.position.x = targetPosition.x;
+        this.objeto_seleccionado.position.y = targetPosition.y;
+        this.objeto_seleccionado.position.z = targetPosition.z;
+        this.objeto_seleccionado.rotation.set(-Math.PI / 2, 0, 0); //Aplicar de nuevo rotación a la figura.
+
+        this.objeto_seleccionado.updateMatrixWorld(); // Actualizar la matriz de transformación del objeto seleccionado
+
+        this.add(this.objeto_seleccionado);//Añade a escena
+      }
+
     }
   }
 
@@ -425,10 +432,12 @@ class MyScene extends THREE.Scene {
   createRoom() {
     //Crear paredes
     this.puerta = this.createDoor();
-    this.puerta.translateZ(200);
-    this.puerta.translateX(50);
+    this.puerta.position.z = 200;
+    this.puerta.position.x = 50;
+    console.log("puerta = "+this.puerta.children);
     var paredes = [];
     var translacion;
+    var roomCSG = new CSG();
     for (let i = 0; i < 4; i++) {
       paredes.push(this.createWall());
       translacion = 1;
@@ -439,12 +448,11 @@ class MyScene extends THREE.Scene {
         paredes[i].rotateY(Math.PI / 2);
       }
       paredes[i].translateZ(translacion * 200);
-      var roomCSG = new CSG();
+      console.log("pared = "+i+" -> "+this.puerta.geometry);
       roomCSG.union([paredes[i]]);
-      roomCSG.subtract([this.puerta]);
-      paredes[i] = roomCSG.toMesh();
-      this.add(paredes[i]);
     }
+    roomCSG = roomCSG.subtract([this.puerta.children[0]]);
+    this.add(roomCSG.toMesh());
     paredes.push(this.createWall()); //Techo
     paredes[4].rotateX(Math.PI / 2);
     paredes[4].translateY(-200);
@@ -459,7 +467,14 @@ class MyScene extends THREE.Scene {
     var textura = new THREE.TextureLoader().load('../img/door.jpeg');
     var material = new THREE.MeshPhongMaterial({ map: textura });
 
-    return new THREE.Mesh(boxGeometry, material);
+    var sphereGeometry = new THREE.SphereGeometry(5, 64, 64);
+    sphereGeometry.translate(-75, 100, -10);
+    var material2 = new THREE.MeshBasicMaterial({ color: 0xff00f0 });
+    var esfera = new THREE.Mesh(sphereGeometry, material2);
+
+    var puerta = new THREE.Object3D();
+    puerta.add(new THREE.Mesh(boxGeometry, material)).add(esfera);
+    return puerta;
   }
 
   createWall() {
@@ -571,14 +586,8 @@ class MyScene extends THREE.Scene {
   }
 
   compruebaFinal() {
-    console.log("Contador final antes -> " + this.contador_final);
     if (this.final) this.contador_final++; //Para que sólo se pueda hacer 1 vez la animación
-    console.log("Contador final despues -> " + this.contador_final);
-    console.log("Objeto seleccionado -> " + this.objeto_seleccionado);
-    console.log("Objeto puerta -> " + this.getObjectById(this.puerta.id));
-    console.log("Final -> " + this.final);
-    console.log("Comprobacion -> " + this.objeto_seleccionado == this.getObjectById(this.puerta.id) && this.contador_final == 1);
-    if (this.objeto_seleccionado == this.getObjectById(this.puerta.id) && this.final && this.contador_final == 1)
+    if ((this.objeto_seleccionado == (this.getObjectById(this.puerta.children[1].id))) && this.final && (this.contador_final == 1))
       this.animacionAbrir.start();
   }
 
@@ -600,13 +609,11 @@ class MyScene extends THREE.Scene {
         contador_distancias++;
       if (contador_distancias == 4)
         this.final = true;
-      console.log("contador_distancias -> " + contador_distancias);
     }
-
+    console.log("Contador distancias -> " + contador_distancias);
   }
 
   changeDistance(event) {
-    event.preventDefault();
     if (event.deltaY > 0) {
       this.distancia_seleccionado -= 5;
     } else {
@@ -690,7 +697,6 @@ $(function () {
     scene.changeDistance(evento);
   });
 
-  console.log(scene.camera);
 
   // Que no se nos olvide, la primera visualización.
   scene.update();
