@@ -432,9 +432,6 @@ class MyScene extends THREE.Scene {
   createRoom() {
     //Crear paredes
     this.puerta = this.createDoor();
-    this.puerta.position.z = 200;
-    this.puerta.position.x = 50;
-    console.log("puerta = "+this.puerta.children);
     var paredes = [];
     var translacion;
     var roomCSG = new CSG();
@@ -448,10 +445,17 @@ class MyScene extends THREE.Scene {
         paredes[i].rotateY(Math.PI / 2);
       }
       paredes[i].translateZ(translacion * 200);
-      console.log("pared = "+i+" -> "+this.puerta.geometry);
       roomCSG.union([paredes[i]]);
     }
-    roomCSG = roomCSG.subtract([this.puerta.children[0]]);
+
+    //Para crear el hueco debemos hacer una malla
+    var boxGeometry = new THREE.BoxGeometry(100,200,10);
+    boxGeometry.translate(-50, 100, 0);
+    boxGeometry.translate(50,0,200);
+    var material = new THREE.MeshBasicMaterial({color: 0xff0000});
+    var malla = new THREE.Mesh(boxGeometry,material);
+    
+    roomCSG = roomCSG.subtract([malla]);
     this.add(roomCSG.toMesh());
     paredes.push(this.createWall()); //Techo
     paredes[4].rotateX(Math.PI / 2);
@@ -474,6 +478,8 @@ class MyScene extends THREE.Scene {
 
     var puerta = new THREE.Object3D();
     puerta.add(new THREE.Mesh(boxGeometry, material)).add(esfera);
+    puerta.position.z = 200;
+    puerta.position.x = 50;
     return puerta;
   }
 
