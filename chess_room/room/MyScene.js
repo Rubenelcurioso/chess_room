@@ -170,7 +170,8 @@ class MyScene extends THREE.Scene {
 
     var lightFlexo = new THREE.SpotLight({color:0xffffff}, 0.2);
     lightFlexo.color = new THREE.Color(0x8844ff);
-    lightFlexo.penumbra = 0.1;
+    lightFlexo.penumbra = 0.5;
+    lightFlexo.angle = Math.PI/3.5;
     // lightFlexo.distance = 200;
     lightFlexo.castShadow = true;
     lightFlexo.shadow.mapSize.width = 1024;
@@ -219,7 +220,7 @@ class MyScene extends THREE.Scene {
     lightFlexo.translateZ(-this.mesa.tableroWidth/1.25 + 125);
     lightFlexo.rotateZ(Math.PI/2);
     const target = new THREE.Object3D();
-    target.position.set(100 + this.mesa.tableroDepth/2 + 2.5, 2*this.mesa.pataHeight + this.mesa.tableroHeight + 2.5, -this.mesa.tableroWidth/1.25 + 105);
+    target.position.set(100 + this.mesa.tableroDepth/2 + 2.5, 2*this.mesa.pataHeight + this.mesa.tableroHeight + 2.5, -this.mesa.tableroWidth/1.25 + 100);
     lightFlexo.target = target;
     
     this.add(lightFlexo);
@@ -494,8 +495,6 @@ class MyScene extends THREE.Scene {
     var roomCSG = new CSG();
     for (let i = 0; i < 4; i++) {
       paredes.push(this.createWall());
-      paredes[i].castShadow = true;
-      paredes[i].receiveShadow = true;
       translacion = 1;
       if (i % 2 == 0) {
         translacion = -1;
@@ -517,13 +516,14 @@ class MyScene extends THREE.Scene {
     malla.receiveShadow = true;
     
     roomCSG = roomCSG.subtract([malla]);
-    this.add(roomCSG.toMesh());
+    var mallaParedes = roomCSG.toMesh();
+    mallaParedes.castShadow = true;
+    mallaParedes.receiveShadow = true;
+    this.add(mallaParedes);
     paredes.push(this.createWall()); //Techo
     paredes[4].rotateX(Math.PI / 2);
     paredes[4].translateY(-200);
     paredes[4].translateZ(-400);
-    paredes[4].castShadow = true;
-    paredes[4].receiveShadow = true;
     this.add(paredes[4]); //Añadir pared al modelo
   }
 
