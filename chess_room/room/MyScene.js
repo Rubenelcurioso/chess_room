@@ -12,6 +12,9 @@ import { Torre } from '../room/torre.js'
 import { Rey } from '../room/rey.js'
 import { Caballo } from '../room/caballo.js'
 import { Reina } from '../room/reina.js'
+import { Mesa } from '../room/mesa.js'
+import { Pendulo } from '../room/pendulo.js'
+import { Flexo } from '../room/flexo.js'
 import * as TWEEN from '../libs/tween.esm.js'
 import { PointerLockControls } from '../libs/PointerLockControls.js'
 
@@ -162,18 +165,60 @@ class MyScene extends THREE.Scene {
 
     //Contado iniciar = 0
     this.contador_final = 0;
-
     this.add(this.puerta);
-
     //Seccion añadir modelos aqui
+
+    // var lightFlexo = new THREE.SpotLight({color:0x8844ff}, 0.2);
+    // lightFlexo.translateY(200);
+    // lightFlexo.translateX(100 + 100);
+    // lightFlexo.translateZ(-200 + 140);
+    // lightFlexo.castShadow = true;
+    // lightFlexo.shadow.mapSize.width = 1024;
+    // lightFlexo.shadow.mapSize.height = 1024;
+    // lightFlexo.shadow.camera.near = 0.5;
+    // lightFlexo.shadow.camera.far = 500;
+    // lightFlexo.shadow.camera.fov = 30;
+
     this.add(new Torre());
     this.add(new Caballo());
     this.add(new Rey());
     this.add(new Reina());
-    this.add(new Tablero());
+    this.mesa = new Mesa();
+    //Colocamos la mesa
+    this.mesa.translateY(this.mesa.pataHeight);
+    this.mesa.translateX(100 + this.mesa.tableroDepth/2);
+    this.mesa.translateZ(-this.mesa.tableroWidth/2 + 1);
+    this.mesa.castShadow = true;
+    this.mesa.receiveShadow = true;
+    this.add(this.mesa);
+
+    this.tablero = new Tablero();
+    //Colocamos el tablero de ajedrez
+    this.tablero.translateY(this.mesa.pataHeight + this.mesa.tableroHeight);
+    this.tablero.translateX(100 + this.mesa.tableroDepth/2);
+    this.tablero.translateZ(-this.mesa.tableroWidth/1.25 + 1);
+    this.add(this.tablero);
+
+    this.pendulo = new Pendulo();
+    this.pendulo.translateY(this.mesa.pataHeight + this.mesa.tableroHeight);
+    this.pendulo.translateX(100 + this.mesa.tableroDepth/2);
+    this.pendulo.translateZ(-this.mesa.tableroWidth/1.25 + 80);
+    this.pendulo.rotateY(-Math.PI/2);
+    this.pendulo.rotateY(-Math.PI/4);
+    this.add(this.pendulo);
+
+    this.flexo = new Flexo();
+    this.flexo.translateY(this.mesa.pataHeight + this.mesa.tableroHeight);
+    this.flexo.translateX(100 + this.mesa.tableroDepth/2);
+    this.flexo.translateZ(-this.mesa.tableroWidth/1.25 + 140);
+    this.add(this.flexo);
+    
+    // this.add(lightFlexo);
+
 
     this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
   }
+
 
 
   initStats() {
@@ -528,6 +573,7 @@ class MyScene extends THREE.Scene {
     // Se declara como   var   y va a ser una variable local a este método
     //    se hace así puesto que no va a ser accedida desde otros métodos
     var ambientLight = new THREE.AmbientLight(0x666666, 0.25);
+    ambientLight.castShadow = true;
     // La añadimos a la escena
     this.add(ambientLight);
 
@@ -539,6 +585,13 @@ class MyScene extends THREE.Scene {
     this.spotLight.position.set(0, 390, 0);
     this.spotLight.angle = Math.PI / 8; // Ángulo de apertura de la luz
     this.spotLight.penumbra = 0.2; // Suavidad de los bordes de la luz
+
+    this.spotLight.castShadow = true;
+    this.spotLight.shadow.mapSize.width = 1024;
+    this.spotLight.shadow.mapSize.height = 1024;
+    this.spotLight.shadow.camera.near = 0.5;
+    this.spotLight.shadow.camera.far = 500;
+    this.spotLight.shadow.camera.fov = 30;
     this.add(this.spotLight);
   }
 
@@ -562,6 +615,9 @@ class MyScene extends THREE.Scene {
     // Se establece el tamaño, se aprovecha la totalidad de la ventana del navegador
     renderer.setSize(window.innerWidth, window.innerHeight);
 
+    //Luces
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     // La visualización se muestra en el lienzo recibido
     $(myCanvas).append(renderer.domElement);
 
