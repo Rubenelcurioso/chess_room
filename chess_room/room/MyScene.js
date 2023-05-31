@@ -168,16 +168,16 @@ class MyScene extends THREE.Scene {
     this.add(this.puerta);
     //Seccion añadir modelos aqui
 
-    // var lightFlexo = new THREE.SpotLight({color:0x8844ff}, 0.2);
-    // lightFlexo.translateY(200);
-    // lightFlexo.translateX(100 + 100);
-    // lightFlexo.translateZ(-200 + 140);
-    // lightFlexo.castShadow = true;
-    // lightFlexo.shadow.mapSize.width = 1024;
-    // lightFlexo.shadow.mapSize.height = 1024;
-    // lightFlexo.shadow.camera.near = 0.5;
-    // lightFlexo.shadow.camera.far = 500;
-    // lightFlexo.shadow.camera.fov = 30;
+    var lightFlexo = new THREE.SpotLight({color:0xffffff}, 0.2);
+    lightFlexo.color = new THREE.Color(0x8844ff);
+    lightFlexo.penumbra = 0.1;
+    // lightFlexo.distance = 200;
+    lightFlexo.castShadow = true;
+    lightFlexo.shadow.mapSize.width = 1024;
+    lightFlexo.shadow.mapSize.height = 1024;
+    lightFlexo.shadow.camera.near = 0.5;
+    lightFlexo.shadow.camera.far = 500;
+    lightFlexo.shadow.camera.fov = 30;
 
     this.add(new Torre());
     this.add(new Caballo());
@@ -213,7 +213,17 @@ class MyScene extends THREE.Scene {
     this.flexo.translateZ(-this.mesa.tableroWidth/1.25 + 140);
     this.add(this.flexo);
     
-    // this.add(lightFlexo);
+    //Trasladamos la luz dentro del flexo
+    lightFlexo.translateY(2*this.mesa.pataHeight + this.mesa.tableroHeight + 2.5);
+    lightFlexo.translateX(100 + this.mesa.tableroDepth/2);
+    lightFlexo.translateZ(-this.mesa.tableroWidth/1.25 + 125);
+    lightFlexo.rotateZ(Math.PI/2);
+    const target = new THREE.Object3D();
+    target.position.set(100 + this.mesa.tableroDepth/2 + 2.5, 2*this.mesa.pataHeight + this.mesa.tableroHeight + 2.5, -this.mesa.tableroWidth/1.25 + 105);
+    lightFlexo.target = target;
+    
+    this.add(lightFlexo);
+    this.add(lightFlexo.target);
 
 
     this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
@@ -465,6 +475,8 @@ class MyScene extends THREE.Scene {
 
     // Ya se puede construir el Mesh
     var ground = new THREE.Mesh(geometryGround, materialGround);
+    ground.castShadow = true;
+    ground.receiveShadow = true;
 
     // Todas las figuras se crean centradas en el origen.
     // El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
@@ -482,6 +494,8 @@ class MyScene extends THREE.Scene {
     var roomCSG = new CSG();
     for (let i = 0; i < 4; i++) {
       paredes.push(this.createWall());
+      paredes[i].castShadow = true;
+      paredes[i].receiveShadow = true;
       translacion = 1;
       if (i % 2 == 0) {
         translacion = -1;
@@ -499,6 +513,8 @@ class MyScene extends THREE.Scene {
     boxGeometry.translate(50,0,200);
     var material = new THREE.MeshBasicMaterial({color: 0xff0000});
     var malla = new THREE.Mesh(boxGeometry,material);
+    malla.castShadow = true;
+    malla.receiveShadow = true;
     
     roomCSG = roomCSG.subtract([malla]);
     this.add(roomCSG.toMesh());
@@ -506,6 +522,8 @@ class MyScene extends THREE.Scene {
     paredes[4].rotateX(Math.PI / 2);
     paredes[4].translateY(-200);
     paredes[4].translateZ(-400);
+    paredes[4].castShadow = true;
+    paredes[4].receiveShadow = true;
     this.add(paredes[4]); //Añadir pared al modelo
   }
 
@@ -520,6 +538,8 @@ class MyScene extends THREE.Scene {
     sphereGeometry.translate(-75, 100, -10);
     var material2 = new THREE.MeshBasicMaterial({ color: 0xff00f0 });
     var esfera = new THREE.Mesh(sphereGeometry, material2);
+    esfera.castShadow = true;
+    esfera.receiveShadow = true;
 
     var puerta = new THREE.Object3D();
     puerta.add(new THREE.Mesh(boxGeometry, material)).add(esfera);
