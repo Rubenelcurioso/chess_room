@@ -245,7 +245,7 @@ class MyScene extends THREE.Scene {
 
     let color_final_bombilla = new THREE.Color("#ff0000");
 
-    let cambia_color_bombilla = new TWEEN.Tween(this.bombilla.material.color)
+    let cambia_color_bombilla = new TWEEN.Tween(this.bombilla.material.emissive)
     .to({ r: color_final_bombilla.r, g: color_final_bombilla.g, b: color_final_bombilla.b }, 5000) // Cambia el valor 1000 para ajustar la duración de la animación
     .easing(TWEEN.Easing.Linear.None)
     .repeat(Infinity)
