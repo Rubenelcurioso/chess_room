@@ -18,6 +18,7 @@ import { Flexo } from '../room/flexo.js'
 import * as TWEEN from '../libs/tween.esm.js'
 import { PointerLockControls } from '../libs/PointerLockControls.js'
 import { Stand } from '../room/stand.js'
+import { lamparaTecho } from '../room/lamparaTecho.js'
 
 // La clase fachada del modelo
 /*
@@ -56,6 +57,7 @@ class MyScene extends THREE.Scene {
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
     this.axis = new THREE.AxesHelper(5);
     this.add(this.axis);
+    //Animaciones de la luz central
     var origen = { angulo: 0 };
     var destino = { angulo: Math.PI / 2 };
 
@@ -69,33 +71,33 @@ class MyScene extends THREE.Scene {
         origen.angulo = 0;
       });
 
-    var origenLuz = { int: 0.5 };
-    var finLuz = { int: 0 };
+    // var origenLuz = { int: 0.5 };
+    // var finLuz = { int: 0 };
 
 
-    var animacionApaga = new TWEEN.Tween(origenLuz)
-      .to(finLuz, 500)
-      .easing(TWEEN.Easing.Linear.None)
-      .onUpdate(() => {
-        this.spotLight.intensity = origenLuz.int;
-      })
-      .onComplete(() => {
-        origenLuz.int = 0.5;
-        animacionMedia.start();
-      });
+    // var animacionApaga = new TWEEN.Tween(origenLuz)
+    //   .to(finLuz, 500)
+    //   .easing(TWEEN.Easing.Linear.None)
+    //   .onUpdate(() => {
+    //     this.spotLight.intensity = origenLuz.int;
+    //   })
+    //   .onComplete(() => {
+    //     origenLuz.int = 0.5;
+    //     animacionMedia.start();
+    //   });
 
-    finLuz = { int: 0.25 };
-    var animacionMedia = new TWEEN.Tween(origenLuz)
-      .to(finLuz, 500)
-      .easing(TWEEN.Easing.Linear.None)
-      .onUpdate(() => {
-        this.spotLight.intensity = origenLuz.int;
-      })
-      .onComplete(() => {
-        origenLuz.int = 0.5;
-        animacionEnciende.start();
-      })
-      .yoyo(true);
+    // finLuz = { int: 0.25 };
+    // var animacionMedia = new TWEEN.Tween(origenLuz)
+    //   .to(finLuz, 500)
+    //   .easing(TWEEN.Easing.Linear.None)
+    //   .onUpdate(() => {
+    //     this.spotLight.intensity = origenLuz.int;
+    //   })
+    //   .onComplete(() => {
+    //     origenLuz.int = 0.5;
+    //     animacionEnciende.start();
+    //   })
+    //   .yoyo(true);
 
 
     var origenLuz = { int: 0.5 };
@@ -235,6 +237,17 @@ class MyScene extends THREE.Scene {
     this.add(lightFlexo);
     this.add(target);
     lightFlexo.target = target;
+    
+    this.lampara = new lamparaTecho();
+    this.bombillaTechoMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, emissive: 0x7f7f7f});
+    this.bombillaTechoGeometry = new THREE.SphereGeometry(2, 32, 32);
+
+    this.bombillaTecho = new THREE.Mesh(this.bombillaTechoGeometry, this.bombillaTechoMaterial);
+    this.bombillaTecho.translateY(-(this.lampara.hangDistance + this.lampara.headHeight / 2));
+    this.lampara.add(this.bombillaTecho);
+
+    this.lampara.translateY(400);
+    this.add(this.lampara);
 
     let color_final = new THREE.Color("#ff0000");
     let cambia_color_luz = new TWEEN.Tween(lightFlexo)
@@ -253,12 +266,187 @@ class MyScene extends THREE.Scene {
 
     cambia_color_luz.start();
     cambia_color_bombilla.start();
+    
+    var origenLuzBombilla = { emissive: new THREE.Color("#7f7f7f") };
+    var finLuzBombilla = { emissive: new THREE.Color("#000000") };
+    
+    var tiempoBombilla = 1000;
+    var animacionApagaBombilla = new TWEEN.Tween(origenLuzBombilla)
+      .to(finLuzBombilla, tiempoBombilla)
+      .easing(TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.bombillaTecho.material.emissive = origenLuzBombilla.emissive;
+      })
+      .onComplete(() => {
+        origenLuzBombilla.emissive = new THREE.Color("#7f7f7f");
+        animacionMedia1Bombilla.start();
+      });
+    
+    var medioLuzBombilla = { emissive: new THREE.Color("#000000") };
+    var medioFinLuzBombilla = { emissive: new THREE.Color("#3f3f3f") };
+    
+    var tiempo2Bombilla = 125;
+    var animacionMedia1Bombilla = new TWEEN.Tween(medioLuzBombilla)
+      .to(medioFinLuzBombilla, tiempo2Bombilla)
+      .easing(TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.bombillaTecho.material.emissive = medioLuzBombilla.emissive;
+      })
+      .onComplete(() => {
+        medioLuzBombilla.emissive = new THREE.Color("#000000");
+        animacionMedia2Bombilla.start();
+      });
+    
+    var medioLuz2Bombilla = { emissive: new THREE.Color("#3f3f3f") };
+    var medioFinLuz2Bombilla = { emissive: new THREE.Color("#000000") };
+    
+    var tiempo3Bombilla = 125;
+    var animacionMedia2Bombilla = new TWEEN.Tween(medioLuz2Bombilla)
+      .to(medioFinLuz2Bombilla, tiempo3Bombilla)
+      .easing(TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.bombillaTecho.material.emissive = medioLuz2Bombilla.emissive;
+      })
+      .onComplete(() => {
+        medioLuz2Bombilla.emissive = new THREE.Color("#3f3f3f");
+        animacionEnciendeBombilla.start();
+      });
+    
+    var origenLuzFinBombilla = { emissive: new THREE.Color("#000000") };
+    var finLuzFinBombilla = { emissive: new THREE.Color("#7f7f7f") };
+    
+    var tiempo4Bombilla = 500;
+    var animacionEnciendeBombilla = new TWEEN.Tween(origenLuzFinBombilla)
+      .to(finLuzFinBombilla, tiempo4Bombilla)
+      .easing(TWEEN.Easing.Linear.None)
+      .onUpdate(() => {
+        this.bombillaTecho.material.emissive = origenLuzFinBombilla.emissive;
+      })
+      .onComplete(() => {
+        origenLuzFinBombilla.emissive = new THREE.Color("#3f3f3f");
+        animacionApagaBombilla.start();
+      });
+    
+    animacionApagaBombilla.start();            
 
+    // const anguloInicial = {angulo : 0};
+    // const anguloFinal = {angulo : Math.PI/6};
+    // const duracionRotacion = 2000;
 
+    // //Rotamos la lampara
+
+    // const subeLampara1 = new TWEEN.Tween(anguloInicial)
+    //   .to(anguloFinal, duracionRotacion)
+    //   .onUpdate(() => {
+    //     this.lampara.rotation.z = anguloInicial.angulo;
+    //   })
+    //   .easing(TWEEN.Easing.Quadratic.Out)
+    //   .onComplete(() => {
+    //     anguloInicial.angulo = Math.PI/6;
+    //     anguloFinal.angulo = 0;
+    //     bajaLampara1.start();
+    //   });
+
+    // const bajaLampara1 = new TWEEN.Tween(anguloInicial)
+    //   .to(anguloFinal, duracionRotacion)
+    //   .onUpdate(() => {
+    //     this.lampara.rotation.z = anguloInicial.angulo;
+    //   })
+    //   .easing(TWEEN.Easing.Quadratic.In)
+    //   .onComplete(() => {
+    //     anguloInicial.angulo = 0;
+    //     anguloFinal.angulo = -Math.PI/6;
+    //     subeLampara2.start();
+    //   });
+
+    // const subeLampara2 = new TWEEN.Tween(anguloInicial)
+    //   .to(anguloFinal, duracionRotacion)
+    //   .onUpdate(() => {
+    //     this.lampara.rotation.z = anguloInicial.angulo;
+    //   })
+    //   .easing(TWEEN.Easing.Quadratic.Out)
+    //   .yoyo(true)
+    //   .onComplete(() => {
+    //     anguloInicial.angulo = -Math.PI/6;
+    //     anguloFinal.angulo = 0;
+    //     bajaLampara2.start();
+    //   });
+
+    // const bajaLampara2 = new TWEEN.Tween(anguloInicial)
+    //   .to(anguloFinal, duracionRotacion)
+    //   .onUpdate(() => {
+    //     this.lampara.rotation.z = anguloInicial.angulo;
+    //   })
+    //   .easing(TWEEN.Easing.Quadratic.In)
+    //   .yoyo(true)
+    //   .onComplete(() => {
+    //     anguloInicial.angulo = 0;
+    //     anguloFinal.angulo = Math.PI/6;
+    //     subeLampara1.start();
+    //   });
+
+    //   const anguloInicialLuz = { angulo: 0 };
+    //   const anguloFinalLuz = { angulo: Math.PI / 6 };
+      
+    //   const mueveLuz1 = new TWEEN.Tween(anguloInicialLuz)
+    //     .to(anguloFinalLuz, duracionRotacion)
+    //     .onUpdate(() => {
+    //       const posX = 3 * Math.cos(anguloInicialLuz.angulo * (Math.PI / 180));
+    //       this.spotLight.position.set(posX, 340, 0);
+    //     })
+    //     .easing(TWEEN.Easing.Quadratic.Out)
+    //     .onComplete(() => {
+    //       anguloInicialLuz.angulo = Math.PI / 6;
+    //       anguloFinalLuz.angulo = 0;
+    //       mueveLuz2.start();
+    //     });
+      
+    //   const mueveLuz2 = new TWEEN.Tween(anguloInicialLuz)
+    //     .to(anguloFinalLuz, duracionRotacion)
+    //     .onUpdate(() => {
+    //       const posX = 3 * Math.cos(anguloInicialLuz.angulo * (Math.PI / 180));
+    //       this.spotLight.position.set(posX, 340, 0);
+    //     })
+    //     .easing(TWEEN.Easing.Quadratic.In)
+    //     .onComplete(() => {
+    //       anguloInicialLuz.angulo = 0;
+    //       anguloFinalLuz.angulo = -Math.PI / 6;
+    //       mueveLuz3.start();
+    //     });
+      
+    //   const mueveLuz3 = new TWEEN.Tween(anguloInicialLuz)
+    //     .to(anguloFinalLuz, duracionRotacion)
+    //     .onUpdate(() => {
+    //       const posX = -3 * Math.cos(anguloInicialLuz.angulo * (Math.PI / 180));
+    //       this.spotLight.position.set(posX, 340, 0);
+    //     })
+    //     .easing(TWEEN.Easing.Quadratic.Out)
+    //     .yoyo(true)
+    //     .onComplete(() => {
+    //       anguloInicialLuz.angulo = -Math.PI / 6;
+    //       anguloFinalLuz.angulo = 0;
+    //       mueveLuz4.start();
+    //     });
+      
+    //   const mueveLuz4 = new TWEEN.Tween(anguloInicialLuz)
+    //     .to(anguloFinalLuz, duracionRotacion)
+    //     .onUpdate(() => {
+    //       const posX = -3 * Math.cos(anguloInicialLuz.angulo * (Math.PI / 180));
+    //       this.spotLight.position.set(posX, 340, 0);
+    //     })
+    //     .easing(TWEEN.Easing.Quadratic.In)
+    //     .yoyo(true)
+    //     .onComplete(() => {
+    //       anguloInicialLuz.angulo = 0;
+    //       anguloFinalLuz.angulo = Math.PI / 6;
+    //       mueveLuz1.start();
+    //     });
+      
+    //   subeLampara1.start();
+    //   mueveLuz1.start();
+      
     this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
   }
-
-
 
   initStats() {
 
@@ -629,7 +817,7 @@ class MyScene extends THREE.Scene {
     // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
     // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
     this.spotLight = new THREE.SpotLight(0xffffff, this.guiControls.lightIntensity);
-    this.spotLight.position.set(0, 390, 0);
+    this.spotLight.position.set(0, 330, 0);
     this.spotLight.angle = Math.PI / 8; // Ángulo de apertura de la luz
     this.spotLight.penumbra = 0.2; // Suavidad de los bordes de la luz
 
