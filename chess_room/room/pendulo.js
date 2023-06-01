@@ -110,6 +110,10 @@ class Pendulo extends THREE.Object3D {
         this.materialBase = new THREE.MeshPhongMaterial({color : 0x663300});
         this.geometryBase = new THREE.BoxGeometry(this.baseWidth , this.baseHeight, 2*this.baseWidth );
         this.geometryBase.translate(0, this.baseHeight, 0);
+
+        var textura = new THREE.TextureLoader().load('../img/woodPendulumBase.jpg');
+        this.materialBase.bumpMap = textura;
+        this.materialBase.bumpScale = 0.15
         
 
         this.base = new THREE.Mesh(this.geometryBase, this.materialBase);
@@ -119,6 +123,9 @@ class Pendulo extends THREE.Object3D {
         this.materialAxis = new THREE.MeshPhongMaterial({color: 0x8A9597});
         this.geometryEje1 = new THREE.CylinderGeometry(this.axisRadius, this.axisRadius, this.axisHeight, 32);
         this.geometryEje1.translate(0, this.axisHeight / 2 + this.baseHeight, 0);
+        var textura = new THREE.TextureLoader().load('../img/metal_textura.jpg');
+        this.materialAxis.bumpMap = textura;
+        this.materialAxis.bumpScale = 0.5;
         
         this. axis1 =new THREE.Mesh(this.geometryEje1, this.materialAxis);
     }
@@ -126,6 +133,9 @@ class Pendulo extends THREE.Object3D {
         this.geometryEje2 = new THREE.CylinderGeometry(this.axisRadius, this.axisRadius, this.axisHeight / 2, 32);
         this.geometryEje2.rotateX(-Math.PI/2);
         this.geometryEje2.translate(0, this.axisHeight + this.baseHeight, this.axisHeight/4);
+        var textura = new THREE.TextureLoader().load('../img/metal_textura.jpg');
+        this.materialAxis.bumpMap = textura;
+        this.materialAxis.bumpScale = 0.5;
         
         this.axis2 =new THREE.Mesh(this.geometryEje2, this.materialAxis);
     }
@@ -141,6 +151,11 @@ class Pendulo extends THREE.Object3D {
         this.materialSphere = new THREE.MeshPhongMaterial({color: 0xFF0000});
         this.geometrySphere = new THREE.SphereGeometry(this.sphereRadius, 32, 16);
         this.geometrySphere.translate(0, -(this.baseHeight/2 + this.ropeHeight), 0);
+
+        var textura = new THREE.TextureLoader().load('../img/texturaBola.jpeg');
+        this.materialSphere.bumpMap = textura;
+        this.materialSphere.bumpScale = 0.75;
+
         this.sphere = new THREE.Mesh(this.geometrySphere, this.materialSphere);
     }
     
