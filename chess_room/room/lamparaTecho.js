@@ -38,8 +38,19 @@ class lamparaTecho extends THREE.Object3D {
         this.materialHead = new THREE.MeshPhongMaterial({color : 0xFFFFFF});
         this.headGeometry = new THREE.CylinderGeometry(this.radiusRope, this.headRadius, this.headHeight, 32);
         this.headGeometry.translate(0, -this.hangDistance, 0);
+
+        var mesh1 = new THREE.Mesh(this.headGeometry, this.materialHead);
+
+        this.headGeometry2 = new THREE.CylinderGeometry(this.radiusRope, this.headRadius, this.headHeight, 32);
+        this.headGeometry2.translate(0, -this.hangDistance - 0.1, 0);
         
-        this.head = new THREE.Mesh(this.headGeometry, this.materialHead);
+        var mesh2 = new THREE.Mesh(this.headGeometry2, this.materialHead);
+        var newCSG = CSG();
+
+        newCSG.union([mesh1]);
+        newCSG.subtract([mesh2]);
+
+        this.head = newCSG.toMesh();
     }
 
     
