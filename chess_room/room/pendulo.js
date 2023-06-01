@@ -20,6 +20,21 @@ class Pendulo extends THREE.Object3D {
         this.createRope();
         this.createSphere();
 
+        this.base.castShadow = true;
+        this.base.receiveShadow = true;
+        
+        this.axis1.castShadow = true;
+        this.axis1.receiveShadow = true;
+        
+        this.axis2.castShadow = true;
+        this.axis2.receiveShadow = true;
+        
+        this.rope.castShadow = true;
+        this.rope.receiveShadow = true;
+        
+        this.sphere.castShadow = true;
+        this.sphere.receiveShadow = true;
+
         this.rope.add(this.sphere);
         this.rope.translateY(this.baseHeight + this.axisHeight);
         this.rope.translateZ(this.axisHeight / 2.5);
