@@ -20,6 +20,15 @@ class Caballo extends THREE.Object3D {
                         object.position.z = 50;
                         object.position.y = 100;
                         object.rotateX(-Math.PI/2);
+
+                        // Habilitar las sombras para el objeto
+                        object.traverse(function(child) {
+                            if (child instanceof THREE.Mesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                            }
+                        });
+                        
                         this.add(object);
                     }, null, null);
             });
