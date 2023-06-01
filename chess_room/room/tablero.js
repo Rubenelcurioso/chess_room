@@ -14,13 +14,27 @@ class Tablero extends THREE.Object3D {
     var objectLoader = new OBJLoader();
     materialLoader.load('../models/tablero/10586_Chess Board_v2_Iterations-2.mtl',
       (materials) => {
+        materials.preload();
         objectLoader.setMaterials(materials);
         objectLoader.load('../models/tablero/10586_Chess Board_v2_Iterations-2.obj',
           (object) => {
+            //Lo colocamos bien orientado
             object.rotateX(-Math.PI / 2);
+            object.rotateZ(-Math.PI / 2);
+            
+            // Habilitar las sombras para el objeto
+            object.traverse(function(child) {
+              if (child instanceof THREE.Mesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+              }
+            });
+            
+            // Agregar el objeto a la escena
             this.add(object);
           }, null, null);
       });
+
 
 
   }
