@@ -17,6 +17,7 @@ import { Pendulo } from '../room/pendulo.js'
 import { Flexo } from '../room/flexo.js'
 import * as TWEEN from '../libs/tween.esm.js'
 import { PointerLockControls } from '../libs/PointerLockControls.js'
+import { Stand } from '../room/stand.js'
 
 // La clase fachada del modelo
 /*
@@ -168,17 +169,16 @@ class MyScene extends THREE.Scene {
     this.add(this.puerta);
     //Seccion añadir modelos aqui
 
-    var lightFlexo = new THREE.SpotLight({color:0xffffff}, 0.2);
+    var lightFlexo = new THREE.SpotLight({color:0xffffff}, 0.75);
+    // var lightFlexo = new THREE.PointLight(0x8844ff, 0.875, 450, 1);
     lightFlexo.color = new THREE.Color(0x8844ff);
     lightFlexo.penumbra = 0.5;
-    lightFlexo.angle = Math.PI/3.5;
     // lightFlexo.distance = 200;
     lightFlexo.castShadow = true;
     lightFlexo.shadow.mapSize.width = 1024;
     lightFlexo.shadow.mapSize.height = 1024;
     lightFlexo.shadow.camera.near = 0.5;
     lightFlexo.shadow.camera.far = 500;
-    lightFlexo.shadow.camera.fov = 30;
 
     this.add(new Torre());
     this.add(new Caballo());
@@ -215,16 +215,44 @@ class MyScene extends THREE.Scene {
     this.add(this.flexo);
     
     //Trasladamos la luz dentro del flexo
+
+    this.bombillaMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, emissive: 0x8844ff});
+    this.bombillaGeometry = new THREE.SphereGeometry(1.2, 32, 32);
+    this.bombilla = new THREE.Mesh(this.bombillaGeometry, this.bombillaMaterial);
+
+    this.bombilla.translateY(2*this.mesa.pataHeight + this.mesa.tableroHeight + 2.5);
+    this.bombilla.translateX(100 + this.mesa.tableroDepth/2);
+    this.bombilla.translateZ(-this.mesa.tableroWidth/1.25 + 129);
+
+    this.add(this.bombilla);
     lightFlexo.translateY(2*this.mesa.pataHeight + this.mesa.tableroHeight + 2.5);
     lightFlexo.translateX(100 + this.mesa.tableroDepth/2);
-    lightFlexo.translateZ(-this.mesa.tableroWidth/1.25 + 125);
-    lightFlexo.rotateZ(Math.PI/2);
+    lightFlexo.translateZ(-this.mesa.tableroWidth/1.25 + 129.2);
+
     const target = new THREE.Object3D();
-    target.position.set(100 + this.mesa.tableroDepth/2 + 2.5, 2*this.mesa.pataHeight + this.mesa.tableroHeight + 2.5, -this.mesa.tableroWidth/1.25 + 100);
-    lightFlexo.target = target;
+    target.position.set(100 + this.mesa.tableroDepth/2, 2*this.mesa.pataHeight + this.mesa.tableroHeight + 2.5, -this.mesa.tableroWidth/1.25 + 100);
     
     this.add(lightFlexo);
-    this.add(lightFlexo.target);
+    this.add(target);
+    lightFlexo.target = target;
+
+    let color_final = new THREE.Color("#ff0000");
+    let cambia_color_luz = new TWEEN.Tween(lightFlexo)
+    .to({ color: color_final }, 5000) // Cambia el valor 1000 para ajustar la duración de la animación
+    .easing(TWEEN.Easing.Linear.None)
+    .repeat(Infinity)
+    .yoyo(true);
+
+    let color_final_bombilla = new THREE.Color("#ff0000");
+
+    let cambia_color_bombilla = new TWEEN.Tween(this.bombilla.material.color)
+    .to({ r: color_final_bombilla.r, g: color_final_bombilla.g, b: color_final_bombilla.b }, 5000) // Cambia el valor 1000 para ajustar la duración de la animación
+    .easing(TWEEN.Easing.Linear.None)
+    .repeat(Infinity)
+    .yoyo(true);
+
+    cambia_color_luz.start();
+    cambia_color_bombilla.start();
 
 
     this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
@@ -593,7 +621,6 @@ class MyScene extends THREE.Scene {
     // Se declara como   var   y va a ser una variable local a este método
     //    se hace así puesto que no va a ser accedida desde otros métodos
     var ambientLight = new THREE.AmbientLight(0x666666, 0.25);
-    ambientLight.castShadow = true;
     // La añadimos a la escena
     this.add(ambientLight);
 
