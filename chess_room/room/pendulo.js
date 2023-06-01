@@ -107,13 +107,13 @@ class Pendulo extends THREE.Object3D {
     }
 
     createBase(){
-        this.materialBase = new THREE.MeshPhongMaterial({color : 0x663300});
+        this.materialBase = new THREE.MeshPhongMaterial({color : 0x896B49});
         this.geometryBase = new THREE.BoxGeometry(this.baseWidth , this.baseHeight, 2*this.baseWidth );
         this.geometryBase.translate(0, this.baseHeight, 0);
 
         var textura = new THREE.TextureLoader().load('../img/woodPendulumBase.jpg');
         this.materialBase.bumpMap = textura;
-        this.materialBase.bumpScale = 0.15
+        this.materialBase.bumpScale = 0.75;
         
 
         this.base = new THREE.Mesh(this.geometryBase, this.materialBase);
