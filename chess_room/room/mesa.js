@@ -63,6 +63,10 @@ class Mesa extends THREE.Object3D {
         this.tableroGeometry = new THREE.BoxGeometry(this.tableroDepth, this.tableroHeight, this.tableroWidth);
         this.tableroGeometry.translate(0, this.tableroHeight / 2, 0);
 
+        var texture = new THREE.TextureLoader().load('../img/textureTable.jpg');
+        this.materialTablero.bumpMap = texture;
+        this.materialTablero.bumpScale = 0.5;
+
         this.tablero = new THREE.Mesh(this.tableroGeometry, this.materialTablero);
     }
 
