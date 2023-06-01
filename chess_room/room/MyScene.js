@@ -19,6 +19,7 @@ import * as TWEEN from '../libs/tween.esm.js'
 import { PointerLockControls } from '../libs/PointerLockControls.js'
 import { Stand } from '../room/stand.js'
 import { lamparaTecho } from '../room/lamparaTecho.js'
+import { Object3D } from '../libs/three.module.js'
 
 // La clase fachada del modelo
 /*
@@ -239,6 +240,8 @@ class MyScene extends THREE.Scene {
     lightFlexo.target = target;
     
     this.lampara = new lamparaTecho();
+    this.target = new Object3D();
+    // this.lampara.add(this.spotLight);
     this.bombillaTechoMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, emissive: 0x7f7f7f});
     this.bombillaTechoGeometry = new THREE.SphereGeometry(2, 32, 32);
 
@@ -247,6 +250,9 @@ class MyScene extends THREE.Scene {
     this.lampara.add(this.bombillaTecho);
 
     this.lampara.translateY(400);
+    this.target.translateY(-400);
+    this.lampara.add(this.target);
+    this.spotLight.target = this.target;
     this.add(this.lampara);
 
     let color_final = new THREE.Color("#ff0000");
@@ -329,121 +335,63 @@ class MyScene extends THREE.Scene {
     
     animacionApagaBombilla.start();            
 
-    // const anguloInicial = {angulo : 0};
-    // const anguloFinal = {angulo : Math.PI/6};
-    // const duracionRotacion = 2000;
+    const anguloInicial = {angulo : 0};
+    const anguloFinal = {angulo : Math.PI/6};
+    const duracionRotacion = 2000;
 
-    // //Rotamos la lampara
+    //Rotamos la lampara
 
-    // const subeLampara1 = new TWEEN.Tween(anguloInicial)
-    //   .to(anguloFinal, duracionRotacion)
-    //   .onUpdate(() => {
-    //     this.lampara.rotation.z = anguloInicial.angulo;
-    //   })
-    //   .easing(TWEEN.Easing.Quadratic.Out)
-    //   .onComplete(() => {
-    //     anguloInicial.angulo = Math.PI/6;
-    //     anguloFinal.angulo = 0;
-    //     bajaLampara1.start();
-    //   });
+    const subeLampara1 = new TWEEN.Tween(anguloInicial)
+      .to(anguloFinal, duracionRotacion)
+      .onUpdate(() => {
+        this.lampara.rotation.z = anguloInicial.angulo;
+      })
+      .easing(TWEEN.Easing.Quadratic.Out)
+      .onComplete(() => {
+        anguloInicial.angulo = Math.PI/6;
+        anguloFinal.angulo = 0;
+        bajaLampara1.start();
+      });
 
-    // const bajaLampara1 = new TWEEN.Tween(anguloInicial)
-    //   .to(anguloFinal, duracionRotacion)
-    //   .onUpdate(() => {
-    //     this.lampara.rotation.z = anguloInicial.angulo;
-    //   })
-    //   .easing(TWEEN.Easing.Quadratic.In)
-    //   .onComplete(() => {
-    //     anguloInicial.angulo = 0;
-    //     anguloFinal.angulo = -Math.PI/6;
-    //     subeLampara2.start();
-    //   });
+    const bajaLampara1 = new TWEEN.Tween(anguloInicial)
+      .to(anguloFinal, duracionRotacion)
+      .onUpdate(() => {
+        this.lampara.rotation.z = anguloInicial.angulo;
+      })
+      .easing(TWEEN.Easing.Quadratic.In)
+      .onComplete(() => {
+        anguloInicial.angulo = 0;
+        anguloFinal.angulo = -Math.PI/6;
+        subeLampara2.start();
+      });
 
-    // const subeLampara2 = new TWEEN.Tween(anguloInicial)
-    //   .to(anguloFinal, duracionRotacion)
-    //   .onUpdate(() => {
-    //     this.lampara.rotation.z = anguloInicial.angulo;
-    //   })
-    //   .easing(TWEEN.Easing.Quadratic.Out)
-    //   .yoyo(true)
-    //   .onComplete(() => {
-    //     anguloInicial.angulo = -Math.PI/6;
-    //     anguloFinal.angulo = 0;
-    //     bajaLampara2.start();
-    //   });
+    const subeLampara2 = new TWEEN.Tween(anguloInicial)
+      .to(anguloFinal, duracionRotacion)
+      .onUpdate(() => {
+        this.lampara.rotation.z = anguloInicial.angulo;
+      })
+      .easing(TWEEN.Easing.Quadratic.Out)
+      .yoyo(true)
+      .onComplete(() => {
+        anguloInicial.angulo = -Math.PI/6;
+        anguloFinal.angulo = 0;
+        bajaLampara2.start();
+      });
 
-    // const bajaLampara2 = new TWEEN.Tween(anguloInicial)
-    //   .to(anguloFinal, duracionRotacion)
-    //   .onUpdate(() => {
-    //     this.lampara.rotation.z = anguloInicial.angulo;
-    //   })
-    //   .easing(TWEEN.Easing.Quadratic.In)
-    //   .yoyo(true)
-    //   .onComplete(() => {
-    //     anguloInicial.angulo = 0;
-    //     anguloFinal.angulo = Math.PI/6;
-    //     subeLampara1.start();
-    //   });
-
-    //   const anguloInicialLuz = { angulo: 0 };
-    //   const anguloFinalLuz = { angulo: Math.PI / 6 };
+    const bajaLampara2 = new TWEEN.Tween(anguloInicial)
+      .to(anguloFinal, duracionRotacion)
+      .onUpdate(() => {
+        this.lampara.rotation.z = anguloInicial.angulo;
+      })
+      .easing(TWEEN.Easing.Quadratic.In)
+      .yoyo(true)
+      .onComplete(() => {
+        anguloInicial.angulo = 0;
+        anguloFinal.angulo = Math.PI/6;
+        subeLampara1.start();
+      });
       
-    //   const mueveLuz1 = new TWEEN.Tween(anguloInicialLuz)
-    //     .to(anguloFinalLuz, duracionRotacion)
-    //     .onUpdate(() => {
-    //       const posX = 3 * Math.cos(anguloInicialLuz.angulo * (Math.PI / 180));
-    //       this.spotLight.position.set(posX, 340, 0);
-    //     })
-    //     .easing(TWEEN.Easing.Quadratic.Out)
-    //     .onComplete(() => {
-    //       anguloInicialLuz.angulo = Math.PI / 6;
-    //       anguloFinalLuz.angulo = 0;
-    //       mueveLuz2.start();
-    //     });
-      
-    //   const mueveLuz2 = new TWEEN.Tween(anguloInicialLuz)
-    //     .to(anguloFinalLuz, duracionRotacion)
-    //     .onUpdate(() => {
-    //       const posX = 3 * Math.cos(anguloInicialLuz.angulo * (Math.PI / 180));
-    //       this.spotLight.position.set(posX, 340, 0);
-    //     })
-    //     .easing(TWEEN.Easing.Quadratic.In)
-    //     .onComplete(() => {
-    //       anguloInicialLuz.angulo = 0;
-    //       anguloFinalLuz.angulo = -Math.PI / 6;
-    //       mueveLuz3.start();
-    //     });
-      
-    //   const mueveLuz3 = new TWEEN.Tween(anguloInicialLuz)
-    //     .to(anguloFinalLuz, duracionRotacion)
-    //     .onUpdate(() => {
-    //       const posX = -3 * Math.cos(anguloInicialLuz.angulo * (Math.PI / 180));
-    //       this.spotLight.position.set(posX, 340, 0);
-    //     })
-    //     .easing(TWEEN.Easing.Quadratic.Out)
-    //     .yoyo(true)
-    //     .onComplete(() => {
-    //       anguloInicialLuz.angulo = -Math.PI / 6;
-    //       anguloFinalLuz.angulo = 0;
-    //       mueveLuz4.start();
-    //     });
-      
-    //   const mueveLuz4 = new TWEEN.Tween(anguloInicialLuz)
-    //     .to(anguloFinalLuz, duracionRotacion)
-    //     .onUpdate(() => {
-    //       const posX = -3 * Math.cos(anguloInicialLuz.angulo * (Math.PI / 180));
-    //       this.spotLight.position.set(posX, 340, 0);
-    //     })
-    //     .easing(TWEEN.Easing.Quadratic.In)
-    //     .yoyo(true)
-    //     .onComplete(() => {
-    //       anguloInicialLuz.angulo = 0;
-    //       anguloFinalLuz.angulo = Math.PI / 6;
-    //       mueveLuz1.start();
-    //     });
-      
-    //   subeLampara1.start();
-    //   mueveLuz1.start();
+      subeLampara1.start();
       
     this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
   }
@@ -768,6 +716,7 @@ class MyScene extends THREE.Scene {
     var boxGeometry = new THREE.BoxGeometry(400, 400, 1);
     boxGeometry.translate(0, 200, 0); //Altura/2
     var textura = new THREE.TextureLoader().load('../img/wall_texture.jpeg');
+    
     var material = new THREE.MeshPhongMaterial({ map: textura });
 
 
