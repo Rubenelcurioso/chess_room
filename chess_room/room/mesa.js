@@ -8,8 +8,8 @@ class Mesa extends THREE.Object3D {
     constructor() {
         super();
         this.tableroHeight = 5;
-        this.tableroWidth = 125;
-        this.tableroDepth = 40;
+        this.tableroWidth = 200;
+        this.tableroDepth = 80;
 
         this.pataHeight = 60;
         this.pataRadius = 3;
@@ -21,6 +21,21 @@ class Mesa extends THREE.Object3D {
         var pata4 = this.createPata();
 
         //Colocamos las patas en su posición
+
+        this.tablero.castShadow = true;
+        this.tablero.receiveShadow = true;
+
+        pata1.castShadow = true;
+        pata1.receiveShadow = true;
+
+        pata2.castShadow = true;
+        pata2.receiveShadow = true;
+
+        pata3.castShadow = true;
+        pata3.receiveShadow = true;
+
+        pata4.castShadow = true;
+        pata4.receiveShadow = true;
 
         pata1.translateZ(this.tableroWidth / 2.5);
         pata3.translateZ(this.tableroWidth / 2.5);
@@ -38,10 +53,9 @@ class Mesa extends THREE.Object3D {
         this.tablero.add(pata3);
         this.tablero.add(pata4);
 
-        this.tablero.translateY(this.pataHeight);
-        this.tablero.translateX(175);
-        this.tablero.translateZ(-125);
         this.add(this.tablero);
+
+
     }
 
     createTablero(){
