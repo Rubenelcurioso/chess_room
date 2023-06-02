@@ -406,6 +406,8 @@ class MyScene extends THREE.Scene {
     this.add(new Stand());
     this.add(new Silla());
     this.add(new TV());
+    this.add(this.createPantalla());
+    this.video.play(); //Comienza video
     this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
   }
 
@@ -736,6 +738,27 @@ class MyScene extends THREE.Scene {
     return new THREE.Mesh(boxGeometry, material);
   }
 
+  createPantalla(){
+    this.video = document.getElementById('video');
+    let videoTextura = new THREE.VideoTexture(this.video);
+
+    videoTextura.magFilter = THREE.LinearFilter;
+    videoTextura.minFilter = THREE.LinearFilter;
+
+    var videoMaterial = new THREE.MeshBasicMaterial({
+        map: videoTextura,
+        side: THREE.FrontSide,
+        toneMapped: false,
+    });
+
+    var boxGeometry = new THREE.BoxGeometry(112.5,65,0.1);
+    videoTextura.needsUpdate = true;
+    boxGeometry.rotateY(-Math.PI/2);
+    boxGeometry.translate(-172.5,116.5,0);
+    
+    return new THREE.Mesh(boxGeometry,videoMaterial);
+  }
+
   createGUI() {
     // Se crea la interfaz gráfica de usuario
     var gui = new GUI();
@@ -906,8 +929,8 @@ class MyScene extends THREE.Scene {
     // Se actualiza la posición de la cámara según su controlador
 
 
-    // Se actualiza el resto del modelo
-    // this.model.update();
+    // Se actualiza el video
+    
 
     TWEEN.update();
 
