@@ -17,10 +17,10 @@ class Caballo extends THREE.Object3D {
                 objectLoader.setMaterials(materials);
                 objectLoader.load('../models/caballo/12943_Stone_Chess_Knight_Side_A_v2_l1.obj',
                     (object) => {
-                        object.position.z = 50;
-                        object.position.y = 100;
+                        object.position.x = -175;
+                        object.position.z = 90;
+                        object.position.y = 0;
                         object.rotateX(-Math.PI/2);
-
                         // Habilitar las sombras para el objeto
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {

@@ -17,7 +17,9 @@ class Torre extends THREE.Object3D {
                 objectLoader.setMaterials(materials);
                 objectLoader.load('../models/torre/12941_Stone_Chess_Rook_Side_A_V2_l1.obj',
                     (object) => {
-                        object.position.y = 100;
+                        object.position.y = 81;
+                        object.position.x = -150;
+                        object.position.z = -100;
                         object.rotateX(-Math.PI/2);
 
                         // Habilitar las sombras para el objeto

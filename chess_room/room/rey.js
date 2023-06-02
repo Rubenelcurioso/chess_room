@@ -17,8 +17,9 @@ class Rey extends THREE.Object3D {
                 objectLoader.setMaterials(materials);
                 objectLoader.load('../models/rey/12939_Stone_Chess_King_Side_A_V2_l1.obj',
                     (object) => {
-                        object.position.x = -50;
-                        object.position.y = 100;
+                        object.position.z = 130;
+                        object.position.x = 170;
+                        object.position.y = 120;
                         object.rotateX(-Math.PI/2);
 
                         // Habilitar las sombras para el objeto

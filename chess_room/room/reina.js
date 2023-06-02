@@ -17,23 +17,24 @@ class Reina extends THREE.Object3D {
                 objectLoader.setMaterials(materials);
                 objectLoader.load('../models/reina/12940_Stone_Chess_Queen_Side_A_V2_l1.obj',
                     (object) => {
-                        object.position.x = 50;
-                        object.position.y = 100;
-                        object.rotateX(-Math.PI/2);
+                        object.position.x = 170;
+                        object.position.z = -210;
+
+                        object.rotateX(-Math.PI / 2);
 
 
                         // Habilitar las sombras para el objeto
-                        object.traverse(function(child) {
+                        object.traverse(function (child) {
                             if (child instanceof THREE.Mesh) {
-                            child.castShadow = true;
-                            child.receiveShadow = true;
+                                child.castShadow = true;
+                                child.receiveShadow = true;
                             }
                         });
 
                         this.add(object);
                     }, null, null);
             });
-        
+
     }
 
 

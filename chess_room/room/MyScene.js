@@ -20,6 +20,9 @@ import { PointerLockControls } from '../libs/PointerLockControls.js'
 import { Stand } from '../room/stand.js'
 import { lamparaTecho } from '../room/lamparaTecho.js'
 import { Object3D } from '../libs/three.module.js'
+import { TV } from './tv.js'
+import { Estante } from './estante.js'
+import { Silla } from './silla.js'
 
 // La clase fachada del modelo
 /*
@@ -399,6 +402,10 @@ class MyScene extends THREE.Scene {
       
     subeLampara1.start();
       
+    this.add(new Estante());
+    this.add(new Stand());
+    this.add(new Silla());
+    this.add(new TV());
     this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
   }
 
