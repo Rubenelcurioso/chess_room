@@ -18,7 +18,7 @@ class lamparaTecho extends THREE.Object3D {
         this.rope.castShadow = true;
         this.rope.receiveShadow = true;
 
-        this.head.castShadow = true;
+        // this.head.castShadow = true;
         this.head.receiveShadow = true;
 
         this.rope.add(this.head);
@@ -37,15 +37,15 @@ class lamparaTecho extends THREE.Object3D {
 
         this.materialHead = new THREE.MeshPhongMaterial({color : 0xFFFFFF});
         this.headGeometry = new THREE.CylinderGeometry(this.radiusRope, this.headRadius, this.headHeight, 32);
-        this.headGeometry.translate(0, -this.hangDistance, 0);
+        this.headGeometry.translate(0, -this.hangDistance - this.headHeight / 2, 0);
 
         var mesh1 = new THREE.Mesh(this.headGeometry, this.materialHead);
 
         this.headGeometry2 = new THREE.CylinderGeometry(this.radiusRope, this.headRadius, this.headHeight, 32);
-        this.headGeometry2.translate(0, -this.hangDistance - 0.1, 0);
+        this.headGeometry2.translate(0, -this.hangDistance - 0.1 - this.headHeight / 2, 0);
         
         var mesh2 = new THREE.Mesh(this.headGeometry2, this.materialHead);
-        var newCSG = CSG();
+        var newCSG = new CSG();
 
         newCSG.union([mesh1]);
         newCSG.subtract([mesh2]);
