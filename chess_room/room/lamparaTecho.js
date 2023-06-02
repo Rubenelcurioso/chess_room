@@ -18,7 +18,7 @@ class lamparaTecho extends THREE.Object3D {
         this.rope.castShadow = true;
         this.rope.receiveShadow = true;
 
-        // this.head.castShadow = true;
+        this.head.castShadow = true;
         this.head.receiveShadow = true;
 
         this.rope.add(this.head);

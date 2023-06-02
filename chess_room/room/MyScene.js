@@ -203,6 +203,7 @@ class MyScene extends THREE.Scene {
     this.tablero.translateZ(-this.mesa.tableroWidth/1.25 + 1);
     this.add(this.tablero);
 
+    //Creación y colocación del péndulo
     this.pendulo = new Pendulo();
     this.pendulo.translateY(this.mesa.pataHeight + this.mesa.tableroHeight);
     this.pendulo.translateX(100 + this.mesa.tableroDepth/2);
@@ -210,6 +211,8 @@ class MyScene extends THREE.Scene {
     this.pendulo.rotateY(-Math.PI/2);
     this.pendulo.rotateY(-Math.PI/4);
     this.add(this.pendulo);
+
+    //Creación y colocación del flexo
 
     this.flexo = new Flexo();
     this.flexo.translateY(this.mesa.pataHeight + this.mesa.tableroHeight);
@@ -232,6 +235,7 @@ class MyScene extends THREE.Scene {
     lightFlexo.translateX(100 + this.mesa.tableroDepth/2);
     lightFlexo.translateZ(-this.mesa.tableroWidth/1.25 + 129.2);
 
+    //Creamos el target y lo colocamos
     const target = new THREE.Object3D();
     target.position.set(100 + this.mesa.tableroDepth/2, 2*this.mesa.pataHeight + this.mesa.tableroHeight + 2.5, -this.mesa.tableroWidth/1.25 + 100);
     
@@ -239,7 +243,9 @@ class MyScene extends THREE.Scene {
     this.add(target);
     lightFlexo.target = target;
     
+    //Creamos y colocamos la lámpara del techo
     this.lampara = new lamparaTecho();
+
     this.target = new Object3D();
     // this.lampara.add(this.spotLight);
     this.bombillaTechoMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, emissive: 0x7f7f7f});
@@ -391,7 +397,7 @@ class MyScene extends THREE.Scene {
         subeLampara1.start();
       });
       
-      subeLampara1.start();
+    subeLampara1.start();
       
     this.array_seleccionables = ["12941_Stone_Chess_Rook_Side_A", "12939_Stone_Chess_King_Side_A", "12940_Stone_Chess_Queen_Side_A", "12943_Stone_Chess_Night_Side_A"];
   }
@@ -766,7 +772,7 @@ class MyScene extends THREE.Scene {
     // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
     // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
     this.spotLight = new THREE.SpotLight(0xffffff, this.guiControls.lightIntensity);
-    this.spotLight.position.set(0, 330, 0);
+    this.spotLight.position.set(0, 320, 0);
     this.spotLight.angle = Math.PI / 8; // Ángulo de apertura de la luz
     this.spotLight.penumbra = 0.2; // Suavidad de los bordes de la luz
 
